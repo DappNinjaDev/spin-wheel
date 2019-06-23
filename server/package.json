@@ -1,0 +1,10 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@waves/waves-crypto": "^3.0.11",
+    "@waves/waves-transactions": "^3.11.0"
+  }
+}

@@ -2,38 +2,54 @@
 {-# CONTENT_TYPE DAPP #-}
 {-# SCRIPT_TYPE ACCOUNT #-}
 
+# server public key
+let ServerPublicKey = base58'HSP9V7edVKjfLJUfRkEF6vfV9Tyz4Us4yqH9rkwqnHY'
+let RouletteSections = 21
+
+let DataGameIdKey = "APP_GAME_ID"
+
 let ErrorOnlyWavesAccepted = "error_only_waves_accepted"
 
-#let RSAPUBLIC = fromBase64String("base64:MIIBvTCCASYCCQD55fNzc0WF7TANBgkqhkiG9w0BAQUFADAjMQswCQYDVQQGEwJKUDEUMBIGA1UEChMLMDAtVEVTVC1SU0EwHhcNMTAwNTI4MDIwODUxWhcNMjAwNTI1MDIwODUxWjAjMQswCQYDVQQGEwJKUDEUMBIGA1UEChMLMDAtVEVTVC1SU0EwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANGEYXtfgDRlWUSDn3haY4NVVQiKI9CzThoua9+DxJuiseyzmBBe7Roh1RPqdvmtOHmEPbJ+kXZYhbozzPRbFGHCJyBfCLzQfVos9/qUQ88u83b0SFA2MGmQWQAlRtLy66EkR4rDRwTj2DzR4EEXgEKpIvo8VBs/3+sHLF3ESgAhAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAEZ6mXFFq3AzfaqWHmCy1ARjlauYAa8ZmUFnLm0emg9dkVBJ63aEqARhtok6bDQDzSJxiLpCEF6G4b/Nv/M/MLyhP+OoOTmETMegAVQMq71choVJyOFE5BtQa6M/lCHEOya5QUfoRF2HF9EjRF44K3OK+u3ivTSj3zwjtpudY5Xo=")
-let RSAPUBLIC = fromBase64String("base64:MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqlAiANSmBpDHYKP9sKgeN/l1bAb28g/tGlgDkwT5FiMN4X3pwdvdxE7mvSR8/41dU9rx4jG+6tZpb1ULVDPs431tR2IRaTXw5Cj+Ac2vhL+5JamCerGD1UW+bh/EGQtxo8W3YLDrofXB5QHJx4Pkz2Kgf+oS/C8hHuB/U4krO76U0507GTjZPP9kRQ0uLSMeqQXt8wXS+nMp5wajqxPpDLMaSREgsKwv/AEkP4dzpTYbikLBYl4qtdJsD84HLFSkiwd3BhcOrPjoIYmLxQuBD5TIMKTKD3sdZgaY9rsyqx3A00innyxD6zp3b4gFpUOX8JxKZdEC2myEqleNgg7GzwIDAQAB")
+func NewGameId () = {
+    let gameNum = match getInteger(this, DataGameIdKey) {
+        case num: Int => num
+        case _ => 0
+    }
+    (gameNum + 1)
+}
 
 @Callable(i)
 func GenerateRandInt (gameId:String, rsaSign:String) = {
-    let rsaSigValid = rsaVerify(SHA256, toBytes(gameId), fromBase64String(rsaSign), RSAPUBLIC)
+    let rsaSigValid = sigVerify(fromBase58String(gameId), fromBase58String(rsaSign), ServerPublicKey);
     if (rsaSigValid) then
     {
-        let rand = (toInt(sha256(toBytes(rsaSign))) % 6)
+        let rand = (toInt(sha256(toBytes(rsaSign))) % RouletteSections)
         #if ((0 > rand))
         #    then (-1 * rand)
         #    else rand
+
         WriteSet([
-            DataEntry("hello", rand)
+            DataEntry("orig", toInt(sha256(toBytes(rsaSign)))),
+            DataEntry("rand", rand)
         ])
     }
     else throw("Invalid RSA signature")
 }
 
 @Callable(i)
-func SetData (k:String, v:String) = {
-    if(k=="hello") then throw("NONONON!!")
-    else
+func bet(expectedResult: Int) = {
+    let gameNumber = NewGameId()
+    let gameId = toBase58String(i.transactionId)
+    let pmt = extract(i.payment)
+
     WriteSet([
-        DataEntry(k, v)
-    ])
+            DataEntry("orig", ""),
+            DataEntry("rand", "")
+        ])
 }
 
 @Callable(i)
-func bet(expectedResult: Int) = {
+func bet111(expectedResult: Int) = {
     let lastAuctionIdKey = "last_auction_id"
     let lastAuctionId = match getInteger(this, lastAuctionIdKey) {
                 case a:Int => a
@@ -76,3 +92,14 @@ func bet(expectedResult: Int) = {
         ])
     }
 }
+
+@Verifier(tx)
+func verify() = if (sigVerify(tx.bodyBytes, getElement(tx.proofs, 0), tx.senderPublicKey))
+    then match tx {
+        #case ttx: TransferTransaction => ((wavesBalance(this) - ttx.amount) >= 0)
+        case stx: SetScriptTransaction =>
+            true
+        case _ =>
+            false
+    }
+    else false
