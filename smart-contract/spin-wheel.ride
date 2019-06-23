@@ -1,0 +1,78 @@
+{-# STDLIB_VERSION 3 #-}
+{-# CONTENT_TYPE DAPP #-}
+{-# SCRIPT_TYPE ACCOUNT #-}
+
+let ErrorOnlyWavesAccepted = "error_only_waves_accepted"
+
+#let RSAPUBLIC = fromBase64String("base64:MIIBvTCCASYCCQD55fNzc0WF7TANBgkqhkiG9w0BAQUFADAjMQswCQYDVQQGEwJKUDEUMBIGA1UEChMLMDAtVEVTVC1SU0EwHhcNMTAwNTI4MDIwODUxWhcNMjAwNTI1MDIwODUxWjAjMQswCQYDVQQGEwJKUDEUMBIGA1UEChMLMDAtVEVTVC1SU0EwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANGEYXtfgDRlWUSDn3haY4NVVQiKI9CzThoua9+DxJuiseyzmBBe7Roh1RPqdvmtOHmEPbJ+kXZYhbozzPRbFGHCJyBfCLzQfVos9/qUQ88u83b0SFA2MGmQWQAlRtLy66EkR4rDRwTj2DzR4EEXgEKpIvo8VBs/3+sHLF3ESgAhAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAEZ6mXFFq3AzfaqWHmCy1ARjlauYAa8ZmUFnLm0emg9dkVBJ63aEqARhtok6bDQDzSJxiLpCEF6G4b/Nv/M/MLyhP+OoOTmETMegAVQMq71choVJyOFE5BtQa6M/lCHEOya5QUfoRF2HF9EjRF44K3OK+u3ivTSj3zwjtpudY5Xo=")
+let RSAPUBLIC = fromBase64String("base64:MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqlAiANSmBpDHYKP9sKgeN/l1bAb28g/tGlgDkwT5FiMN4X3pwdvdxE7mvSR8/41dU9rx4jG+6tZpb1ULVDPs431tR2IRaTXw5Cj+Ac2vhL+5JamCerGD1UW+bh/EGQtxo8W3YLDrofXB5QHJx4Pkz2Kgf+oS/C8hHuB/U4krO76U0507GTjZPP9kRQ0uLSMeqQXt8wXS+nMp5wajqxPpDLMaSREgsKwv/AEkP4dzpTYbikLBYl4qtdJsD84HLFSkiwd3BhcOrPjoIYmLxQuBD5TIMKTKD3sdZgaY9rsyqx3A00innyxD6zp3b4gFpUOX8JxKZdEC2myEqleNgg7GzwIDAQAB")
+
+@Callable(i)
+func GenerateRandInt (gameId:String, rsaSign:String) = {
+    let rsaSigValid = rsaVerify(SHA256, toBytes(gameId), fromBase64String(rsaSign), RSAPUBLIC)
+    if (rsaSigValid) then
+    {
+        let rand = (toInt(sha256(toBytes(rsaSign))) % 6)
+        #if ((0 > rand))
+        #    then (-1 * rand)
+        #    else rand
+        WriteSet([
+            DataEntry("hello", rand)
+        ])
+    }
+    else throw("Invalid RSA signature")
+}
+
+@Callable(i)
+func SetData (k:String, v:String) = {
+    if(k=="hello") then throw("NONONON!!")
+    else
+    WriteSet([
+        DataEntry(k, v)
+    ])
+}
+
+@Callable(i)
+func bet(expectedResult: Int) = {
+    let lastAuctionIdKey = "last_auction_id"
+    let lastAuctionId = match getInteger(this, lastAuctionIdKey) {
+                case a:Int => a
+                case _ => 0
+    }
+
+    let id = lastAuctionId + 1
+    let newAuctionId = toString(id)
+    let ownerWallet = toBase58String(i.caller.bytes)
+    let pmt = value(i.payment)
+    if (isDefined(pmt.assetId)) then throw(ErrorOnlyWavesAccepted)
+    else {
+        let assetId = toBase58String(value(pmt.assetId))
+        let auctionDurationKey = "auction_" + newAuctionId + "_duration"
+        let auctionMinBidKey = "auction_" + newAuctionId + "_min_bid"
+        let auctionLastBidKey = "auction_" + newAuctionId + "_last_bid"
+        let auctionLastBidOwnerKey = "auction_" + newAuctionId + "_last_bid_owner"
+        let auctionOwnerKey = "auction_" + newAuctionId + "_owner"
+        let auctionAmountKey = "auction_" + newAuctionId + "_amount"
+        let auctionAssetIdKey = "auction_" + newAuctionId + "_asset_id"
+        let auctionIsActiveKey = "auction_" + newAuctionId + "_is_active"
+        let userBalanceKey = "balance_" + ownerWallet + "_" + assetId
+
+        let currentAmount = match getInteger(this, userBalanceKey) {
+                case a:Int => a
+                case _ => 0
+        }
+        let newAmount = currentAmount + pmt.amount
+        WriteSet([
+            #DataEntry(auctionDurationKey, height + duration),
+            #DataEntry(auctionMinBidKey, minBid),
+            DataEntry(auctionLastBidKey, 0),
+            DataEntry(auctionOwnerKey, ownerWallet),
+            DataEntry(auctionAmountKey, pmt.amount),
+            DataEntry(auctionAssetIdKey, assetId),
+            DataEntry(userBalanceKey, newAmount),
+            DataEntry(auctionIsActiveKey, true),
+            DataEntry(auctionLastBidOwnerKey, ""),
+            DataEntry(lastAuctionIdKey, id)
+        ])
+    }
+}
