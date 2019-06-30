@@ -2,36 +2,74 @@
 {-# CONTENT_TYPE DAPP #-}
 {-# SCRIPT_TYPE ACCOUNT #-}
 
-# server public key
-let ServerPublicKey = base58'HSP9V7edVKjfLJUfRkEF6vfV9Tyz4Us4yqH9rkwqnHY'
+let ServerPublicKey = base58'DrYgfD7j6AKD1iXtn9uhMka95ATZB42B1kGKCUATP2UG'
+let ServerAddress = addressFromStringValue("3Mu8oKScWCwR33YomT5ukU73P7jLryZTk4s")
 let RouletteSections = 21
 
-let DataGameIdKey = "APP_GAME_ID"
+let DataGameNumberKey = "APP_GAME_ID"
+let DataAmountKey = "AMOUNT"
+let DataSectionKey = "SECTION"
+let DataStatusKey = "STATUS"
+let DataResultKey = "RESULT"
 
-let ErrorOnlyWavesAccepted = "error_only_waves_accepted"
+let DataStatusNew = "NEW"
+let DataStatusWin = "WIN"
+let DataStatusLoose = "LOOSE"
+
+let WAVELET = ((100 * 1000) * 1000)
+let COMMISSION = ((5 * WAVELET) / 1000)
+
+let ErrorOnlyWavesAccepted = "Only waves accepted"
+let ErrorMustGreaterThan0 = "Parameter size must be greater than 0"
+let ErrorMustLessThan100 = "Parameter size must be less than 100"
+let ErrorBetMustBeInWaves = "Bet amount must be in Waves"
+let ErrorTransactionMustBeInWaves = "Transaction's fee must be in Waves"
+let ErrorTransactionUsed = "Passed txId had been used before. Game aborted."
+let ErrorKeyNotFound = "Key not found: "
+let ErrorGameOver = "Game already is over"
+
+func StoreData(transactionId: String, key: String, value: String)={
+    DataEntry(transactionId + "_" + key, value)
+}
+
+func StoreDataInt(transactionId: String, key: String, value: Int)={
+    DataEntry(transactionId + "_" + key, value)
+}
+
+func GetDataString(transactionId: String, key: String) = {
+    let fullKey = transactionId + "_" + key
+    match getString(this, fullKey) {
+        case str: String => str
+        case _ =>
+            throw(ErrorKeyNotFound + fullKey)
+    }
+}
+
+func GetDataInt(transactionId: String, key: String) = {
+    let fullKey = transactionId + "_" + key
+    match getInteger(this, fullKey) {
+        case str: Int => str
+        case _ =>
+            throw(ErrorKeyNotFound + fullKey)
+    }
+}
 
 func NewGameId () = {
-    let gameNum = match getInteger(this, DataGameIdKey) {
+    let gameNum = match getInteger(this, DataGameNumberKey) {
         case num: Int => num
         case _ => 0
     }
     (gameNum + 1)
 }
 
-@Callable(i)
-func GenerateRandInt (gameId:String, rsaSign:String) = {
+func GenerateRandInt (gameId: String, rsaSign: String) = {
     let rsaSigValid = sigVerify(fromBase58String(gameId), fromBase58String(rsaSign), ServerPublicKey);
     if (rsaSigValid) then
     {
         let rand = (toInt(sha256(toBytes(rsaSign))) % RouletteSections)
-        #if ((0 > rand))
-        #    then (-1 * rand)
-        #    else rand
-
-        WriteSet([
-            DataEntry("orig", toInt(sha256(toBytes(rsaSign)))),
-            DataEntry("rand", rand)
-        ])
+        if ((0 > rand))
+            then (-1 * rand)
+            else rand
     }
     else throw("Invalid RSA signature")
 }
@@ -39,58 +77,54 @@ func GenerateRandInt (gameId:String, rsaSign:String) = {
 @Callable(i)
 func bet(expectedResult: Int) = {
     let gameNumber = NewGameId()
-    let gameId = toBase58String(i.transactionId)
+    let gameTransactionId = toBase58String(i.transactionId)
+    let address = toBase58String(i.caller.bytes)
     let pmt = extract(i.payment)
+    let txIdUsed = isDefined(getString(this, gameTransactionId))
+    let betNotInWaves = isDefined(pmt.assetId)
+    let feeNotInWaves = isDefined(pmt.assetId)
+    let amount = pmt.amount;
 
-    WriteSet([
-            DataEntry("orig", ""),
-            DataEntry("rand", "")
-        ])
+    if (betNotInWaves)
+        then throw(ErrorBetMustBeInWaves)
+        else if (feeNotInWaves)
+            then throw(ErrorTransactionMustBeInWaves)
+            else if (txIdUsed)
+                then throw(ErrorTransactionUsed)
+                else {
+                    WriteSet([
+                        DataEntry(gameTransactionId, address),
+                        DataEntry(DataGameNumberKey, gameNumber),
+                        StoreDataInt(gameTransactionId, DataAmountKey, amount),
+                        StoreDataInt(gameTransactionId, DataSectionKey, expectedResult),
+                        StoreData(gameTransactionId, DataStatusKey, DataStatusNew)
+                    ])
+                }
 }
 
 @Callable(i)
-func bet111(expectedResult: Int) = {
-    let lastAuctionIdKey = "last_auction_id"
-    let lastAuctionId = match getInteger(this, lastAuctionIdKey) {
-                case a:Int => a
-                case _ => 0
-    }
-
-    let id = lastAuctionId + 1
-    let newAuctionId = toString(id)
-    let ownerWallet = toBase58String(i.caller.bytes)
-    let pmt = value(i.payment)
-    if (isDefined(pmt.assetId)) then throw(ErrorOnlyWavesAccepted)
-    else {
-        let assetId = toBase58String(value(pmt.assetId))
-        let auctionDurationKey = "auction_" + newAuctionId + "_duration"
-        let auctionMinBidKey = "auction_" + newAuctionId + "_min_bid"
-        let auctionLastBidKey = "auction_" + newAuctionId + "_last_bid"
-        let auctionLastBidOwnerKey = "auction_" + newAuctionId + "_last_bid_owner"
-        let auctionOwnerKey = "auction_" + newAuctionId + "_owner"
-        let auctionAmountKey = "auction_" + newAuctionId + "_amount"
-        let auctionAssetIdKey = "auction_" + newAuctionId + "_asset_id"
-        let auctionIsActiveKey = "auction_" + newAuctionId + "_is_active"
-        let userBalanceKey = "balance_" + ownerWallet + "_" + assetId
-
-        let currentAmount = match getInteger(this, userBalanceKey) {
-                case a:Int => a
-                case _ => 0
+func result(gameTransactionId: String, rsa: String) = {
+    let rand = GenerateRandInt(gameTransactionId, rsa)
+    let selectedSection = GetDataInt(gameTransactionId, DataSectionKey)
+    let status = GetDataString(gameTransactionId, DataStatusKey)
+    if (status == DataStatusNew) then {
+        let isWin = rand == selectedSection
+        let writeSet = WriteSet([
+                StoreData(gameTransactionId, DataStatusKey, toString(isWin)),
+                StoreDataInt(gameTransactionId, DataResultKey, rand)
+            ])
+        if(isWin) then {
+            # pay
+            ScriptResult(
+                writeSet,
+                TransferSet([
+                    ScriptTransfer(ServerAddress, COMMISSION, unit)
+                ])
+                )
+        } else {
+            writeSet
         }
-        let newAmount = currentAmount + pmt.amount
-        WriteSet([
-            #DataEntry(auctionDurationKey, height + duration),
-            #DataEntry(auctionMinBidKey, minBid),
-            DataEntry(auctionLastBidKey, 0),
-            DataEntry(auctionOwnerKey, ownerWallet),
-            DataEntry(auctionAmountKey, pmt.amount),
-            DataEntry(auctionAssetIdKey, assetId),
-            DataEntry(userBalanceKey, newAmount),
-            DataEntry(auctionIsActiveKey, true),
-            DataEntry(auctionLastBidOwnerKey, ""),
-            DataEntry(lastAuctionIdKey, id)
-        ])
-    }
+    } else throw(ErrorGameOver+status)
 }
 
 @Verifier(tx)
