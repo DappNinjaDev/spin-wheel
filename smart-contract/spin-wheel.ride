@@ -2,8 +2,8 @@
 {-# CONTENT_TYPE DAPP #-}
 {-# SCRIPT_TYPE ACCOUNT #-}
 
-let ServerPublicKey = base58'DrYgfD7j6AKD1iXtn9uhMka95ATZB42B1kGKCUATP2UG'
-let ServerAddress = addressFromStringValue("3Mu8oKScWCwR33YomT5ukU73P7jLryZTk4s")
+let ServerPublicKey = base58'kYxoGdY4mv5zMYWYJTq3Pp3uLDuLphTYfT8epjYEJvy'
+let ServerAddress = addressFromStringValue("3MuJmCSEUgBNy1R2gesk59xDbWcuTKwwixW")
 let RouletteSections = 21
 
 let DataGameNumberKey = "APP_GAME_ID"
@@ -33,7 +33,7 @@ let ErrorBetMustBeInWaves = "Bet amount must be in Waves"
 let ErrorTransactionMustBeInWaves = "Transaction's fee must be in Waves"
 let ErrorTransactionUsed = "Passed txId had been used before. Game aborted."
 let ErrorKeyNotFound = "Key not found: "
-let ErrorGameOver = "Game already is over"
+let ErrorGameOver = "Game already is over "
 let ErrorIncorrectSectionResult = "Incorrect section result"
 let ErrorBetAmountNotInRange = "Bet amount is not in range"
 
@@ -45,12 +45,18 @@ func StoreDataInt(transactionId: String, key: String, value: Int)={
     DataEntry(transactionId + "_" + key, value)
 }
 
+func GetData(key: String) = {
+    match getString(this, key) {
+        case str: String => str
+        case _ => throw(ErrorKeyNotFound + key)
+    }
+}
+
 func GetDataString(transactionId: String, key: String) = {
     let fullKey = transactionId + "_" + key
     match getString(this, fullKey) {
         case str: String => str
-        case _ =>
-            throw(ErrorKeyNotFound + fullKey)
+        case _ => throw(ErrorKeyNotFound + fullKey)
     }
 }
 
@@ -58,8 +64,7 @@ func GetDataInt(transactionId: String, key: String) = {
     let fullKey = transactionId + "_" + key
     match getInteger(this, fullKey) {
         case str: Int => str
-        case _ =>
-            throw(ErrorKeyNotFound + fullKey)
+        case _ => throw(ErrorKeyNotFound + fullKey)
     }
 }
 
@@ -89,7 +94,17 @@ func GetStatus(result: Boolean) = {
 }
 
 func GetWinAmount (betAmt: Int, section: Int) = {
-    let isIncorrectResult = section <= 0 || section > 20
+    #let isIncorrectResult = section <= 0 || section > 20
+    let isCorrectResult = if (if (if (if ((section == 2))
+        then true
+        else (section == 5))
+        then true
+        else (section == 6))
+        then true
+        else (section == 10))
+        then true
+        else (section == 20)
+
     let betAmtValid = if (if (if (if ((betAmt == (BET1 + COMMISSION)))
         then true
         else (betAmt == (BET2 + COMMISSION)))
@@ -100,14 +115,13 @@ func GetWinAmount (betAmt: Int, section: Int) = {
         then true
         else (betAmt == (BET14 + COMMISSION))
 
-    if (isIncorrectResult) then throw(ErrorIncorrectSectionResult)
-    else if(betAmtValid) then (betAmt - COMMISSION) * Sections[section]
+    if (!isCorrectResult) then throw(ErrorIncorrectSectionResult)
+    else if(betAmtValid) then (betAmt - COMMISSION) * section
     else throw(ErrorBetAmountNotInRange)
 }
 
 @Callable(i)
 func bet(expectedResult: Int) = {
-
     let gameNumber = NewGameId()
     let gameTransactionId = toBase58String(i.transactionId)
     let address = toBase58String(i.caller.bytes)
@@ -118,15 +132,11 @@ func bet(expectedResult: Int) = {
     let amount = pmt.amount;
     let winAmt = GetWinAmount(pmt.amount, expectedResult)
 
-
-        if (betNotInWaves)
-            then throw(ErrorBetMustBeInWaves)
-            else if (feeNotInWaves)
-                then throw(ErrorTransactionMustBeInWaves)
-                else if (txIdUsed)
-                    then throw(ErrorTransactionUsed)
-                    else {
-                        ScriptResult(
+    if (betNotInWaves) then throw(ErrorBetMustBeInWaves)
+    else if (feeNotInWaves) then throw(ErrorTransactionMustBeInWaves)
+        else if (txIdUsed) then throw(ErrorTransactionUsed)
+            else {
+                    ScriptResult(
                             WriteSet([
                                 DataEntry(gameTransactionId, address),
                                 DataEntry(DataGameNumberKey, gameNumber),
@@ -144,36 +154,38 @@ func bet(expectedResult: Int) = {
 
 @Callable(i)
 func result(gameTransactionId: String, rsa: String) = {
-    let rand = GenerateRandInt(gameTransactionId, rsa)
+    let randIndex = GenerateRandInt(gameTransactionId, rsa)
     let selectedSection = GetDataInt(gameTransactionId, DataSectionKey)
     let status = GetDataString(gameTransactionId, DataStatusKey)
     if (status == DataStatusNew) then {
-        let isWin = rand == selectedSection
+        let randSection = Sections[randIndex]
+        let isWin = randSection == selectedSection
         let writeSet = WriteSet([
-                StoreData(gameTransactionId, DataStatusKey, GetStatus(isWin)),
-                StoreDataInt(gameTransactionId, DataResultKey, rand)
-            ])
+            StoreData(gameTransactionId, DataStatusKey, GetStatus(isWin)),
+            StoreDataInt(gameTransactionId, DataResultKey, randSection)
+        ])
+
         if(isWin) then {
+            let wallet = GetData(gameTransactionId)
+            let winAmount = GetDataInt(gameTransactionId, DataWinAmountKey)
             ScriptResult(
                 writeSet,
                 TransferSet([
-                    # todo pay to player
-                    ScriptTransfer(ServerAddress, COMMISSION, unit)
+                    ScriptTransfer(addressFromStringValue(wallet), winAmount, unit)
                 ])
             )
         } else {
             writeSet
         }
-    } else throw(ErrorGameOver+status)
+    } else throw(ErrorGameOver + status)
 }
 
 @Verifier(tx)
 func verify() = if (sigVerify(tx.bodyBytes, getElement(tx.proofs, 0), tx.senderPublicKey))
     then match tx {
         #case ttx: TransferTransaction => ((wavesBalance(this) - ttx.amount) >= 0)
-        case stx: SetScriptTransaction =>
-            true
-        case _ =>
-            false
+        case ttx: TransferTransaction => true
+        case stx: SetScriptTransaction => true
+        case _ => false
     }
     else false

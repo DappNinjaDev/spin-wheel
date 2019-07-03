@@ -105,11 +105,11 @@ const result = (dappAddress, gameId, rsa, seed) => {
 
 };
 
-const gameId = 'Cj7R9FrJD17K56EHxQFAjsmc8EhKxSxWyx1oHv8p716y';
+const gameId = '21hVN9jMTvtS5Hmft9YoL1ch8uKgNKvwL8WeSpFAmqNi';
 const sign = signGame(gameId, serverAccountSeed);
 console.log('Sign is', sign);
 /*sendSignedGame(dappAddress, data.gameIdBase58, data.signBase58, serverAccountSeed);*/
 //const r=crypto.base58Decode(crypto.sha256(data.signBase58));
 //console.log(Number(r));
-bet(dappAddress, 1, 100500000, serverAccountSeed);
-//result(dappAddress, gameId, sign, serverAccountSeed);
+//bet(dappAddress, 2, 100500000, serverAccountSeed);
+result(dappAddress, gameId, sign, serverAccountSeed);
