@@ -90,7 +90,7 @@ const result = (dappAddress, gameId, rsa, seed) => {
 
 (async () => {
     const betResult = await bet(dappAddress, 2, 100500000, serverAccountSeed);
-    const sign = signGame(betResult, serverAccountSeed);
+    /*const sign = signGame(betResult, serverAccountSeed);
     console.log('Sign is', sign);
     await result(dappAddress, betResult, sign, serverAccountSeed);
     for (let i = 0; i <= 100; i++) {
@@ -103,5 +103,5 @@ const result = (dappAddress, gameId, rsa, seed) => {
         } else {
             await delay(1000);
         }
-    }
+    }*/
 })();

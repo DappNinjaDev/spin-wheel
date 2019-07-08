@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "@waves/waves-crypto": "^3.0.11",
-    "@waves/waves-transactions": "^3.11.0"
+    "@waves/waves-transactions": "^3.11.0",
+    "delay": "^4.3.0"
   }
 }
