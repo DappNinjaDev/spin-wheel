@@ -77,6 +77,10 @@ const doJob = async () => {
     }
 
     const gameStatus = await nodeInteraction.accountDataByKey(`${gameData.value}_STATUS`, dappAddress, getConfig('url'));
+    if (!gameStatus) {
+        return false;
+    }
+
     //console.log(gameStatus);
     if (gameStatus.value !== 'NEW') {
         console.log('Game already done');
