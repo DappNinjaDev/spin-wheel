@@ -13,14 +13,14 @@ console.log('Server address: ' + serverAccountAddress);
 
 // todo add command for testing (amount of bets, is need send results or not and etc)
 (async () => {
-    for (let i = 0; i < 90; i++) {
+    /*for (let i = 0; i < 40; i++) {
         console.log('Do bet..', i);
-        const betResult = await bet(dappAddress, 2, 100500000, serverAccountSeed);
+        const betResult = await bet(dappAddress, 10, 100500000, serverAccountSeed);
         console.log('Wait tx..', betResult.id);
-        await wait(betResult.id);
+        //await wait(betResult.id);
         console.log('Done!');
         fs.appendFileSync('random_stata.txt', betResult.id + "\r\n");
-    }
+    }*/
 
     /*const array = fs.readFileSync('random_stata.txt').toString().split("\r\n");
     let log = {};

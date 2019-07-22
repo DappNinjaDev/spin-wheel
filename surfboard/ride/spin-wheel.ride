@@ -128,7 +128,6 @@ func bet(expectedResult: Int) = {
     let address = toBase58String(i.caller.bytes)
     let pmt = extract(i.payment)
     let txIdUsed = isDefined(getString(this, gameTransactionId))
-    # todo identical vars
     let betNotInWaves = isDefined(pmt.assetId)
     let feeNotInWaves = isDefined(pmt.assetId)
     let amount = pmt.amount;

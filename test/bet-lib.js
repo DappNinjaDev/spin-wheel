@@ -43,6 +43,8 @@ const bet = async (dappAddress, expectedResult, amount, seed) => {
         senderPublicKey: pubKey
     }, seed);
 
+    console.log(txData);
+
     return broadcast(txData, getConfig('url'));
 };
 
