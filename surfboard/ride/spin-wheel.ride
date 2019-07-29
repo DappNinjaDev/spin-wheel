@@ -2,8 +2,8 @@
 {-# CONTENT_TYPE DAPP #-}
 {-# SCRIPT_TYPE ACCOUNT #-}
 
-let ServerPublicKey = base58'kYxoGdY4mv5zMYWYJTq3Pp3uLDuLphTYfT8epjYEJvy'
-let ServerAddress = addressFromStringValue("3MuJmCSEUgBNy1R2gesk59xDbWcuTKwwixW")
+let ServerPublicKey = base58'{{server_public_key}}'
+let ServerAddress = addressFromStringValue("{{server_address}}")
 let RouletteSections = 21
 
 let DataGameNumberKey = "APP_GAME_ID"
