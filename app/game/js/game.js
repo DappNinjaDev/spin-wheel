@@ -7,7 +7,7 @@
  * GAME SETTING CUSTOMIZATION START
  *
  */
-var enableFixedResult = false; //option to have fixed result by API, enabling this will disable 2D physics engine
+var enableFixedResult = true; //option to have fixed result by API, enabling this will disable 2D physics engine
 var enablePercentage = false; //option to have result base on percentage, enabling this will disable 2D physics engine
 
 var spinDirection = true; //true to spin right, false to spin left
@@ -613,9 +613,22 @@ function buildGameButton() {
     });
 
     buttonSpin.cursor = "pointer";
-    buttonSpin.addEventListener("click", function (evt) {
-        //getResult(-1,-1);
-        startSpinWheel(true);
+    buttonSpin.addEventListener("click", async function (evt) {
+        const isBet = await doBet(2);
+        if (isBet) {
+            // todo start spin
+            // todo wait result transaction. when complete, set result for game
+            getResult(1, -1);
+
+            startSpinWheel(true);
+            const number = await waitTxNumber();
+            const section = getRandomSectionByNumber(number);
+            console.log(section);
+            //getResult(section, -1);
+        } else {
+            // todo not spin, show error or smth
+        }
+
     });
 
 
@@ -1264,6 +1277,7 @@ function startSpinWheelBig() {
     if (gameData.spinDirection) {
         toRotate = Math.abs(totalRoundNum + rotateNum);
     }
+
     TweenMax.to(wheelOuterContainer, totalRound, {
         rotation: toRotate, overwrite: true, ease: Circ.easeOut, onComplete: function () {
             gameData.wheelNum = innerNum;
@@ -1682,10 +1696,37 @@ function animateSpinStatus(obj, con, alpha) {
  * SAVE GAME - This is the function that runs to fixed result
  *
  */
+
 function getResult(wheelNum, wheelInnerNum) {
     gameData.fixedRotate = wheelNum;
     gameData.fixedInnerRotate = wheelInnerNum;
 }
+
+const doBet = async (section) => {
+    if ([2, 5, 6, 10, 20].indexOf(section) === -1) {
+        alert('Incorrect bet');
+        return false;
+    }
+    // todo interact with waves keeper
+    // todo return is transaction sent
+
+    return true;
+};
+
+const waitTxNumber = async () => {
+    // todo return false or number
+    return 2;
+};
+
+const getRandomSectionByNumber = (number) => {
+    wheel_arr.map((item, index) => item.index = index);
+    const items = wheel_arr.filter(item => Number(item.slot.text) === number);
+    if (items.length === 0) {
+        return false;
+    }
+
+    return items[Math.floor(Math.random() * items.length)].index;
+};
 
 /*!
  *
