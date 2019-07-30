@@ -583,15 +583,20 @@ function buildGameButton() {
         playSound('soundClick');
 
         //memberpayment
-        if (typeof memberData != 'undefined') {
+        /*if (typeof memberData != 'undefined') {
             if (!checkMemberGameType()) {
+                console.log('user');
                 goMemberPage('user');
             } else {
+                console.log('game');
                 goPage('game');
             }
         } else {
+            console.log('game11');
+
             goPage('game');
-        }
+        }*/
+        goPage('game');
     });
 
     buttonMinus.cursor = "pointer";
@@ -612,8 +617,42 @@ function buildGameButton() {
         toggleBetNumber();
     });
 
+    [bet1, bet2, bet4, bet8, bet14].forEach(item => {
+        item.cursor = "pointer";
+        item.addEventListener("mousedown", function (evt) {
+            playSound('soundChips');
+            //toggleBetNumber('plus');
+            console.log('bet mousedown');
+        });
+        item.addEventListener("pressup", function (evt) {
+            //toggleBetNumber();
+            console.log('bet pressup');
+        });
+    });
+
+    [section2, section5, section6, section10, section20].forEach(item => {
+        item.cursor = "pointer";
+        item.addEventListener("mousedown", function (evt) {
+            playSound('soundChips');
+            //toggleBetNumber('plus');
+            console.log('section mousedown');
+        });
+        item.addEventListener("pressup", function (evt) {
+            //toggleBetNumber();
+            console.log('section pressup');
+        });
+    });
+
     buttonSpin.cursor = "pointer";
     buttonSpin.addEventListener("click", async function (evt) {
+        if (gameData.spinning) {
+            console.log('Already spinning');
+            return;
+        }
+
+        playerData.score = 5000;
+        toggleBetNumber('plus');
+
         const isBet = await doBet(2);
         if (isBet) {
             // todo start spin
@@ -623,7 +662,7 @@ function buildGameButton() {
             startSpinWheel(true);
             const number = await waitTxNumber();
             const section = getRandomSectionByNumber(number);
-            console.log(section);
+            console.log(number, section);
             //getResult(section, -1);
         } else {
             // todo not spin, show error or smth
@@ -728,6 +767,7 @@ function goPage(page) {
  */
 
 function startGame() {
+    console.log('startGame');
     toggleWheelActive(true);
     toggleInstruction(true);
 
@@ -737,7 +777,7 @@ function startGame() {
     playerData.chance = gameData.startChance = gameChance;
     playerData.score = playerData.point = 0;
 
-    if (gamePlayType) {
+    /*if (gamePlayType) {
         chanceTxt.visible = true;
         betTxt.visible = false;
         itemGame1.visible = true;
@@ -752,25 +792,32 @@ function startGame() {
         generateTickets();
         animateInsertTicket();
         buttonPlus.visible = buttonMinus.visible = false;
-    } else {
-        playerData.score = playerData.point = gameBetPoint;
-        playerData.bet = 0;
-        betData.betNumber = 0;
-        betData.betNumberPlus = 0;
+    } else {*/
+    playerData.score = playerData.point = gameBetPoint;
+    playerData.bet = 0;
+    betData.betNumber = 0;
+    betData.betNumberPlus = 0;
 
-        chanceTxt.visible = false;
-        betTxt.visible = true;
-        itemGame1.visible = false;
-        itemGame2.visible = true;
+    chanceTxt.visible = false;
+    //betTxt.visible = true;
+    itemGame1.visible = false;
+    itemGame2.visible = true;
 
-        buttonPlus.visible = buttonMinus.visible = true;
+    //buttonPlus.visible = buttonMinus.visible = true;
 
-        //memberpayment
-        if (typeof memberData != 'undefined') {
-            playerData.score = playerData.point = memberData.point;
-        }
-    }
+    //memberpayment
+    /*if (typeof memberData != 'undefined') {
+        playerData.score = playerData.point = memberData.point;
+    }*/
+    //}
 
+
+    // force disable old elements
+    buttonPlus.visible = false;
+    buttonMinus.visible = false;
+    betTxt.visible = false;
+
+    // top: spin your fotunen
     statusTxt.text = statusText_arr[0];
     gameData.shape.style = defaultStatusBgColor;
     gameData.touch = false;
@@ -787,6 +834,7 @@ function startGame() {
     if (gameData.physicsEngine) {
         warmUpWheel();
     }
+
     animateLights('static');
     animateSpinStatus(statusTxt, false);
 }
@@ -1522,7 +1570,7 @@ function checkWheelScore() {
  *
  */
 function checkGameEnd() {
-    if (gamePlayType) {
+    /*if (gamePlayType) {
         //memberpayment
         if (typeof memberData != 'undefined') {
             updateUserPoint();
@@ -1535,21 +1583,21 @@ function checkGameEnd() {
                 }
             });
         }
-    } else {
-        //memberpayment
-        if (typeof memberData != 'undefined') {
-            playerData.point = playerData.score;
-            updateUserPoint();
-        }
+    } else {*/
+    //memberpayment
+    /*if (typeof memberData != 'undefined') {
+        playerData.point = playerData.score;
+        updateUserPoint();
+    }*/
 
-        if (playerData.score <= 0) {
-            TweenMax.to(itemStatusBg, 3, {
-                overwrite: true, onComplete: function () {
-                    goPage('result');
-                }
-            });
-        }
-    }
+    /*if (playerData.score <= 0) {
+        TweenMax.to(itemStatusBg, 3, {
+            overwrite: true, onComplete: function () {
+                goPage('result');
+            }
+        });
+    }*/
+    //}
 }
 
 /*!

@@ -101,7 +101,7 @@ function buildGameCanvas() {
     buttonSpin = new createjs.Bitmap(loader.getResult('buttonSpin'));
     centerReg(buttonSpin);
     buttonSpin.x = canvasW / 100 * 28;
-    buttonSpin.y = canvasH / 100 * 67;
+    buttonSpin.y = canvasH / 100 * 73;
 
     buttonPlus = new createjs.Bitmap(loader.getResult('buttonPlus'));
     centerReg(buttonPlus);
@@ -112,10 +112,24 @@ function buildGameCanvas() {
     buttonMinus.x = canvasW / 100 * 38;
     buttonPlus.y = buttonMinus.y = canvasH / 100 * 53;
 
+    ['section2', 'section5', 'section6', 'section10', 'section20'].forEach((item, index) => {
+        window[item] = new createjs.Bitmap(loader.getResult(item));
+        centerReg(window[item]);
+        window[item].x = canvasW / 100 * (13 + index * 7.5);
+        window[item].y = canvasH / 100 * 42;
+    });
+
+    ['bet1', 'bet2', 'bet4', 'bet8', 'bet14'].forEach((item, index) => {
+        window[item] = new createjs.Bitmap(loader.getResult(item));
+        centerReg(window[item]);
+        window[item].x = canvasW / 100 * (13 + index * 7.5);
+        window[item].y = canvasH / 100 * 58;
+    });
+
     itemStatusBg = new createjs.Shape();
     itemStatusBg.graphics.beginFill("red");
     gameData.shape = itemStatusBg.graphics.beginFill("red").command;
-    itemStatusBg.graphics.drawRoundRectComplex(canvasW / 100 * 13.9, canvasH / 100 * 27.3, 360, 63, 5, 5, 5, 5);
+    itemStatusBg.graphics.drawRoundRectComplex(canvasW / 100 * 13.9, canvasH / 100 * 22.3, 360, 63, 5, 5, 5, 5);
 
     statusTxt = new createjs.Text();
     statusTxt.font = "45px libel_suitregular";
@@ -124,7 +138,7 @@ function buildGameCanvas() {
     statusTxt.textBaseline = 'alphabetic';
     statusTxt.text = '$300';
     statusTxt.x = canvasW / 100 * 28;
-    statusTxt.y = canvasH / 100 * 34;
+    statusTxt.y = canvasH / 100 * 29;
 
     instructionTxt = new createjs.Text();
     instructionTxt.font = "30px libel_suitregular";
@@ -134,7 +148,7 @@ function buildGameCanvas() {
     instructionTxt.text = '';
     instructionTxt.lineHeight = 32;
     instructionTxt.x = canvasW / 100 * 28;
-    instructionTxt.y = canvasH / 100 * 80;
+    instructionTxt.y = canvasH / 100 * 88;
 
     var _frameW = 22;
     var _frameH = 22;
@@ -260,7 +274,11 @@ function buildGameCanvas() {
 
     mainContainer.addChild(logo, buttonStart);
     wheelContainer.addChild(bgWheel, wheelOuterContainer, wheelInnerContainer, itemWheelCentre, itemWheel, lightsContainer, itemArrow, wheelPinContainer);
-    gameContainer.addChild(itemPin, itemLightAnimate, itemTicket, itemSide, itemGame1, itemGame2, itemTicketMask, ticketContainer, creditTxt, chanceTxt, betTxt, buttonMinus, buttonPlus, buttonSpin, itemStatusBg, statusTxt, instructionTxt);
+    gameContainer.addChild(itemPin, itemLightAnimate, itemTicket, itemSide, itemGame1, itemGame2, itemTicketMask,
+        ticketContainer, creditTxt, chanceTxt, betTxt, buttonMinus, buttonPlus, buttonSpin, itemStatusBg, statusTxt, instructionTxt,
+        bet1, bet2, bet4, bet8, bet14,
+        section2, section5, section6, section10, section20
+    );
     resultContainer.addChild(itemResultSide, resultTitleTxt, resultScoreTxt, buttonReplay);
 
     if (shareEnable) {
