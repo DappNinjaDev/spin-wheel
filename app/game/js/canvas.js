@@ -114,16 +114,36 @@ function buildGameCanvas() {
 
     ['section2', 'section5', 'section6', 'section10', 'section20'].forEach((item, index) => {
         window[item] = new createjs.Bitmap(loader.getResult(item));
+        window[item]._section = Number(item.replace('section', ''));
         centerReg(window[item]);
         window[item].x = canvasW / 100 * (13 + index * 7.5);
         window[item].y = canvasH / 100 * 42;
     });
 
     ['bet1', 'bet2', 'bet4', 'bet8', 'bet14'].forEach((item, index) => {
-        window[item] = new createjs.Bitmap(loader.getResult(item));
+        /*window[item] = new createjs.Bitmap(loader.getResult(item));
+        window[item]._bet = Number(item.replace('bet', ''));
         centerReg(window[item]);
         window[item].x = canvasW / 100 * (13 + index * 7.5);
-        window[item].y = canvasH / 100 * 58;
+        window[item].y = canvasH / 100 * 58;*/
+
+        window[item] = new createjs.Container();
+        const obj = new createjs.Bitmap(loader.getResult(item));
+        obj._bet = Number(item.replace('bet', ''));
+        window[item].addChild(obj);
+        centerReg(obj);
+        obj.x = canvasW / 100 * (13 + index * 7.5);
+        obj.y = canvasH / 100 * 58;
+
+        let hl = new createjs.Shape();
+        hl.name = 'hl';
+        hl.graphics.clear();
+        hl.graphics.setStrokeStyle(5).beginStroke('#fff');
+        hl.visible = false;
+        hl.x = obj.x;
+        hl.y = obj.y;
+        hl.graphics.rect(-42, -45, 85, 85).closePath();
+        window[item].addChild(hl);
     });
 
     itemStatusBg = new createjs.Shape();
@@ -273,9 +293,12 @@ function buildGameCanvas() {
     }
 
     mainContainer.addChild(logo, buttonStart);
-    wheelContainer.addChild(bgWheel, wheelOuterContainer, wheelInnerContainer, itemWheelCentre, itemWheel, lightsContainer, itemArrow, wheelPinContainer);
+    wheelContainer.addChild(bgWheel, wheelOuterContainer, wheelInnerContainer, itemWheelCentre, itemWheel,
+        lightsContainer, itemArrow, wheelPinContainer);
+
     gameContainer.addChild(itemPin, itemLightAnimate, itemTicket, itemSide, itemGame1, itemGame2, itemTicketMask,
-        ticketContainer, creditTxt, chanceTxt, betTxt, buttonMinus, buttonPlus, buttonSpin, itemStatusBg, statusTxt, instructionTxt,
+        ticketContainer, creditTxt, chanceTxt, betTxt, buttonMinus, buttonPlus, buttonSpin, itemStatusBg, statusTxt,
+        instructionTxt,
         bet1, bet2, bet4, bet8, bet14,
         section2, section5, section6, section10, section20
     );

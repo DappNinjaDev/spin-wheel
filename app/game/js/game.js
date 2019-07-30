@@ -559,7 +559,17 @@ var gameData = {
     fixedRotate: -1,
     fixedInnerRotate: -1
 };
-var betData = {interval: null, timer: 0, timerMax: 300, timerMin: 10, betpoint: 0, betNumber: 0, betNumberPlus: 0};
+var betData = {
+    interval: null,
+    timer: 0,
+    timerMax: 300,
+    timerMin: 10,
+    betpoint: 0,
+    betNumber: 0,
+    betNumberPlus: 0,
+    wavesBet: 0,
+    wavesSection: 0
+};
 var lightData = {side: true, num: 0};
 
 /*!
@@ -617,16 +627,21 @@ function buildGameButton() {
         toggleBetNumber();
     });
 
-    [bet1, bet2, bet4, bet8, bet14].forEach(item => {
+    betsItems = [bet1, bet2, bet4, bet8, bet14];
+    betsItems.forEach(item => {
         item.cursor = "pointer";
         item.addEventListener("mousedown", function (evt) {
             playSound('soundChips');
             //toggleBetNumber('plus');
-            console.log('bet mousedown');
+            //console.log('bet mousedown');
+            //console.log(item._bet);
+            betData.wavesBet = item._bet;
+            betsItems.forEach(item => item.getChildByName('hl').visible = false);
+            item.getChildByName('hl').visible = true;
         });
         item.addEventListener("pressup", function (evt) {
             //toggleBetNumber();
-            console.log('bet pressup');
+            //console.log('bet pressup');
         });
     });
 
@@ -635,11 +650,13 @@ function buildGameButton() {
         item.addEventListener("mousedown", function (evt) {
             playSound('soundChips');
             //toggleBetNumber('plus');
-            console.log('section mousedown');
+            //console.log('section mousedown');
+            //console.log(item._section);
+            betData.wavesSection = item._section;
         });
         item.addEventListener("pressup", function (evt) {
             //toggleBetNumber();
-            console.log('section pressup');
+            //console.log('section pressup');
         });
     });
 
@@ -667,9 +684,7 @@ function buildGameButton() {
         } else {
             // todo not spin, show error or smth
         }
-
     });
-
 
     buttonReplay.cursor = "pointer";
     buttonReplay.addEventListener("click", function (evt) {
@@ -719,7 +734,7 @@ function toggleWheelActive(con) {
  * DISPLAY PAGES - This is the function that runs to display pages
  *
  */
-var curPage = ''
+var curPage = '';
 
 function goPage(page) {
     curPage = page;
@@ -816,6 +831,7 @@ function startGame() {
     buttonPlus.visible = false;
     buttonMinus.visible = false;
     betTxt.visible = false;
+    creditTxt.visible = false;
 
     // top: spin your fotunen
     statusTxt.text = statusText_arr[0];
@@ -1014,13 +1030,14 @@ function updateBetNumber() {
  *
  */
 function updateStat() {
-    if (gamePlayType) {
+    //creditTxt.visible = false;
+    /*if (gamePlayType) {
         chanceTxt.text = chancesText.replace('[NUMBER]', playerData.chance);
         creditTxt.text = creditText.replace('[NUMBER]', addCommas(Math.floor(playerData.point)));
     } else {
         creditTxt.text = creditText.replace('[NUMBER]', addCommas(Math.floor(playerData.point)));
         betTxt.text = creditText.replace('[NUMBER]', addCommas(Math.floor(playerData.bet)));
-    }
+    }*/
 }
 
 /*!
@@ -1099,7 +1116,7 @@ function drawWheel() {
             if (wheel_arr[n].slot.highlightColor != '') {
                 $.wheel['slotH' + n] = new createjs.Shape();
                 $.wheel['slotH' + n].graphics.clear();
-                $.wheel['slotH' + n].graphics.beginFill(wheel_arr[n].slot.highlightColor).setStrokeStyle(wheel_arr[n].slot.stroke).beginStroke(wheel_arr[n].slot.strokeColor)
+                $.wheel['slotH' + n].graphics.beginFill(wheel_arr[n].slot.highlightColor).setStrokeStyle(wheel_arr[n].slot.stroke).beginStroke(wheel_arr[n].slot.strokeColor);
                 $.wheel['slotH' + n].visible = false;
 
                 $.wheel['slotH' + n].graphics.moveTo(0, 0).arc(0, 0, firstWheelRadius, 0, endAngle, false).closePath();
