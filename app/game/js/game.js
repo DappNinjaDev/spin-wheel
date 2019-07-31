@@ -663,6 +663,7 @@ function buildGameButton() {
         });
     });
 
+    spinInterval = null;
     buttonSpin.cursor = "pointer";
     buttonSpin.addEventListener("click", async function (evt) {
         if (gameData.spinning) {
@@ -670,17 +671,30 @@ function buildGameButton() {
             return;
         }
 
-        playerData.score = 5000;
-        toggleBetNumber('plus');
-
         console.log(betData.wavesSection, betData.wavesBet);
         const isBet = await doBet(2);
         if (isBet) {
+            clearInterval(spinInterval);
+            const run = (result) => {
+                playerData.score = 5000;
+                toggleBetNumber('plus');
+                getResult(result, -1);
+                startSpinWheel(true, true);
+            };
+
+            playSound('soundSpin');
+            run(2);
+            spinInterval = setInterval(_=>{
+                run(2);
+            }, 1000);
             // todo start spin
             // todo wait result transaction. when complete, set result for game
-            getResult(2, -1);
 
-            startSpinWheel(true);
+            setTimeout(_ => {
+                clearInterval(spinInterval);
+                run(1);
+            }, 10000);
+
             const number = await waitTxNumber();
             const section = getRandomSectionByNumber(number);
             console.log(number, section);
@@ -1233,18 +1247,20 @@ function drawWheel() {
  * SPIN WHEEL - This is the function that runs to spin wheel
  *
  */
-function startSpinWheel(con) {
-    if (gameData.spinning) {
-        return;
-    }
-
-    if (gamePlayType) {
-        if (playerData.chance <= 0) {
+function startSpinWheel(con, force = false) {
+    if (!force) {
+        if (gameData.spinning) {
             return;
         }
-    } else {
-        if (playerData.bet <= 0) {
-            return;
+
+        if (gamePlayType) {
+            if (playerData.chance <= 0) {
+                return;
+            }
+        } else {
+            if (playerData.bet <= 0) {
+                return;
+            }
         }
     }
 
@@ -1280,18 +1296,18 @@ function startSpinWheel(con) {
         }
     }
 
-    playSound('soundSpin');
-    playSoundLoop('soundSpinning');
+    //playSoundLoop('soundSpinning');
 
     if (con) {
         gameData.spinDirection = spinDirection;
 
-        if (!gameData.physicsEngine) {
-            startSpinWheelBig();
-        } else {
+        if (gameData.physicsEngine) {
             startPhysicsSpin();
+        } else {
+            startSpinWheelBig();
         }
     }
+
     startSpinWheelInner();
     animateLights('spin');
 
@@ -1350,11 +1366,16 @@ function startSpinWheelBig() {
         toRotate = Math.abs(totalRoundNum + rotateNum);
     }
 
+    console.log(totalRound, toRotate);
     TweenMax.to(wheelOuterContainer, totalRound, {
-        rotation: toRotate, overwrite: true, ease: Circ.easeOut, onComplete: function () {
+        rotation: toRotate,
+        overwrite: true,
+        ease: Circ.easeOut,
+        onComplete: function () {
             gameData.wheelNum = innerNum;
-            TweenMax.to(wheelOuterContainer, 1, {
-                overwrite: true, onComplete: function () {
+            TweenMax.to(wheelOuterContainer, 0, {
+                overwrite: true,
+                onComplete: function () {
                     checkWheelScore();
                 }
             });
