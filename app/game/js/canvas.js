@@ -38,6 +38,20 @@ $.wheelInner = {};
 $.ticket = {};
 $.light = {};
 
+function createHighlight(x, y, rectX = -42, rectY = -45, rectWidth = 85, rectHeight = 85) {
+    let hl = new createjs.Shape();
+    hl.name = 'hl';
+    hl.graphics.clear();
+    //hl.graphics.setStrokeStyle(5).beginStroke('#fff');
+    hl.graphics.setStrokeStyle(2).beginStroke('#000');
+    hl.visible = false;
+    hl.x = x;
+    hl.y = y;
+    hl.graphics.rect(rectX, rectY, rectWidth, rectHeight).closePath();
+
+    return hl;
+}
+
 /*!
  *
  * BUILD GAME CANVAS ASSERTS - This is the function that runs to build game canvas asserts
@@ -113,37 +127,25 @@ function buildGameCanvas() {
     buttonPlus.y = buttonMinus.y = canvasH / 100 * 53;
 
     ['section2', 'section5', 'section6', 'section10', 'section20'].forEach((item, index) => {
-        window[item] = new createjs.Bitmap(loader.getResult(item));
+        window[item] = new createjs.Container();
+        const obj = new createjs.Bitmap(loader.getResult(item));
         window[item]._section = Number(item.replace('section', ''));
-        centerReg(window[item]);
-        window[item].x = canvasW / 100 * (13 + index * 7.5);
-        window[item].y = canvasH / 100 * 42;
+        window[item].addChild(obj);
+        centerReg(obj);
+        obj.x = canvasW / 100 * (13 + index * 7.5);
+        obj.y = canvasH / 100 * 42;
+        window[item].addChild(createHighlight(obj.x, obj.y));
     });
 
     ['bet1', 'bet2', 'bet4', 'bet8', 'bet14'].forEach((item, index) => {
-        /*window[item] = new createjs.Bitmap(loader.getResult(item));
-        window[item]._bet = Number(item.replace('bet', ''));
-        centerReg(window[item]);
-        window[item].x = canvasW / 100 * (13 + index * 7.5);
-        window[item].y = canvasH / 100 * 58;*/
-
         window[item] = new createjs.Container();
         const obj = new createjs.Bitmap(loader.getResult(item));
-        obj._bet = Number(item.replace('bet', ''));
+        window[item]._bet = Number(item.replace('bet', ''));
         window[item].addChild(obj);
         centerReg(obj);
         obj.x = canvasW / 100 * (13 + index * 7.5);
         obj.y = canvasH / 100 * 58;
-
-        let hl = new createjs.Shape();
-        hl.name = 'hl';
-        hl.graphics.clear();
-        hl.graphics.setStrokeStyle(5).beginStroke('#fff');
-        hl.visible = false;
-        hl.x = obj.x;
-        hl.y = obj.y;
-        hl.graphics.rect(-42, -45, 85, 85).closePath();
-        window[item].addChild(hl);
+        window[item].addChild(createHighlight(obj.x, obj.y));
     });
 
     itemStatusBg = new createjs.Shape();

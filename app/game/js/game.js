@@ -567,8 +567,8 @@ var betData = {
     betpoint: 0,
     betNumber: 0,
     betNumberPlus: 0,
-    wavesBet: 0,
-    wavesSection: 0
+    wavesSection: 2,
+    wavesBet: 1
 };
 var lightData = {side: true, num: 0};
 
@@ -634,7 +634,7 @@ function buildGameButton() {
             playSound('soundChips');
             //toggleBetNumber('plus');
             //console.log('bet mousedown');
-            //console.log(item._bet);
+            console.log(item._bet);
             betData.wavesBet = item._bet;
             betsItems.forEach(item => item.getChildByName('hl').visible = false);
             item.getChildByName('hl').visible = true;
@@ -645,14 +645,17 @@ function buildGameButton() {
         });
     });
 
-    [section2, section5, section6, section10, section20].forEach(item => {
+    sectionItems = [section2, section5, section6, section10, section20];
+    sectionItems.forEach(item => {
         item.cursor = "pointer";
         item.addEventListener("mousedown", function (evt) {
             playSound('soundChips');
             //toggleBetNumber('plus');
             //console.log('section mousedown');
-            //console.log(item._section);
+            console.log(item._section);
             betData.wavesSection = item._section;
+            sectionItems.forEach(item => item.getChildByName('hl').visible = false);
+            item.getChildByName('hl').visible = true;
         });
         item.addEventListener("pressup", function (evt) {
             //toggleBetNumber();
@@ -670,11 +673,12 @@ function buildGameButton() {
         playerData.score = 5000;
         toggleBetNumber('plus');
 
+        console.log(betData.wavesSection, betData.wavesBet);
         const isBet = await doBet(2);
         if (isBet) {
             // todo start spin
             // todo wait result transaction. when complete, set result for game
-            getResult(1, -1);
+            getResult(2, -1);
 
             startSpinWheel(true);
             const number = await waitTxNumber();
@@ -833,6 +837,7 @@ function startGame() {
     betTxt.visible = false;
     creditTxt.visible = false;
 
+
     // top: spin your fotunen
     statusTxt.text = statusText_arr[0];
     gameData.shape.style = defaultStatusBgColor;
@@ -853,6 +858,8 @@ function startGame() {
 
     animateLights('static');
     animateSpinStatus(statusTxt, false);
+    window[`bet${betData.wavesBet}`].getChildByName('hl').visible = true;
+    window[`section${betData.wavesSection}`].getChildByName('hl').visible = true;
 }
 
 /*!
