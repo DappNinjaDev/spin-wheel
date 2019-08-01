@@ -663,7 +663,6 @@ function buildGameButton() {
         });
     });
 
-    spinInterval = null;
     buttonSpin.cursor = "pointer";
     buttonSpin.addEventListener("click", async function (evt) {
         if (gameData.spinning) {
@@ -674,31 +673,23 @@ function buildGameButton() {
         console.log(betData.wavesSection, betData.wavesBet);
         const isBet = await doBet(2);
         if (isBet) {
-            clearInterval(spinInterval);
-            const run = (result) => {
+            const run = (result, isForce = false, isEmulation = false) => {
                 playerData.score = 5000;
                 toggleBetNumber('plus');
                 getResult(result, -1);
-                startSpinWheel(true, true);
+                startSpinWheel(true, isForce, isEmulation);
             };
 
             playSound('soundSpin');
-            run(2);
-            spinInterval = setInterval(_=>{
-                run(2);
-            }, 1000);
-            // todo start spin
-            // todo wait result transaction. when complete, set result for game
+            run(0, false, true);
 
             setTimeout(_ => {
-                clearInterval(spinInterval);
-                run(1);
+                run(3, true, false);
             }, 10000);
 
             const number = await waitTxNumber();
             const section = getRandomSectionByNumber(number);
             console.log(number, section);
-            //getResult(section, -1);
         } else {
             // todo not spin, show error or smth
         }
@@ -1247,8 +1238,8 @@ function drawWheel() {
  * SPIN WHEEL - This is the function that runs to spin wheel
  *
  */
-function startSpinWheel(con, force = false) {
-    if (!force) {
+function startSpinWheel(con, isForce = false, isEmulation = false) {
+    if (!isForce) {
         if (gameData.spinning) {
             return;
         }
@@ -1304,7 +1295,7 @@ function startSpinWheel(con, force = false) {
         if (gameData.physicsEngine) {
             startPhysicsSpin();
         } else {
-            startSpinWheelBig();
+            startSpinWheelBig(isEmulation);
         }
     }
 
@@ -1334,7 +1325,7 @@ function getAnglePosition(obj, x1, y1, radius, angle) {
  * START SPIN WHEEL INNER - This is the function that runs to spin inner wheel
  *
  */
-function startSpinWheelBig() {
+function startSpinWheelBig(isEmulation = false) {
     gameData.spindType = true;
     gameData.spinning = true;
     gameData.stopped = false;
@@ -1367,20 +1358,33 @@ function startSpinWheelBig() {
     }
 
     console.log(totalRound, toRotate);
-    TweenMax.to(wheelOuterContainer, totalRound, {
-        rotation: toRotate,
-        overwrite: true,
-        ease: Circ.easeOut,
-        onComplete: function () {
-            gameData.wheelNum = innerNum;
-            TweenMax.to(wheelOuterContainer, 0, {
-                overwrite: true,
-                onComplete: function () {
-                    checkWheelScore();
-                }
-            });
-        }
-    });
+    // totalRound - seconds
+    // toRotate - rotate angle?
+    if (isEmulation) {
+        // 300 - 60*5 mins
+        wheelOuterContainer.rotation = 0;
+        TweenMax.to(wheelOuterContainer, 300, {
+            rotation: 100000,
+            overwrite: true,
+            ease: Power0.easeOut
+        });
+    } else {
+        TweenMax.to(wheelOuterContainer, totalRound, {
+            rotation: toRotate,
+            overwrite: true,
+            ease: Circ.easeOut,
+            onComplete: function () {
+                gameData.wheelNum = innerNum;
+                TweenMax.to(wheelOuterContainer, 0, {
+                    overwrite: true,
+                    onComplete: function () {
+                        checkWheelScore();
+                    }
+                });
+            }
+        });
+    }
+
 }
 
 
