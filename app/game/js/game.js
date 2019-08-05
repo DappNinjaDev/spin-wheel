@@ -37,6 +37,23 @@ var instructionTxt2 = 'First place your bets,\nspin the wheel or tap on the spin
 var firstWheelRadius = 230; //first wheel radius for slot color feature
 var secondWheelRadius = 100; //second wheel radius for slot color feature
 
+const dapp = {
+    testnet: {
+        address: '3N8M61KCm8G72mK8PjacFbnnxdbFsyqQDeT',
+        chainId: 'T'
+    },
+    prod: {
+        address: '',
+        chainId: ''
+    },
+    custom: {
+        address: '',
+        chainId: ''
+    }
+};
+
+const wavesEnv = 'testnet';
+
 //wheel segments
 var wheel_arr = [
     {
@@ -634,7 +651,7 @@ function buildGameButton() {
             playSound('soundChips');
             //toggleBetNumber('plus');
             //console.log('bet mousedown');
-            console.log(item._bet);
+            console.log('Bet', item._bet);
             betData.wavesBet = item._bet;
             betsItems.forEach(item => item.getChildByName('hl').visible = false);
             item.getChildByName('hl').visible = true;
@@ -652,7 +669,7 @@ function buildGameButton() {
             playSound('soundChips');
             //toggleBetNumber('plus');
             //console.log('section mousedown');
-            console.log(item._section);
+            console.log('Section', item._section);
             betData.wavesSection = item._section;
             sectionItems.forEach(item => item.getChildByName('hl').visible = false);
             item.getChildByName('hl').visible = true;
@@ -665,34 +682,7 @@ function buildGameButton() {
 
     buttonSpin.cursor = "pointer";
     buttonSpin.addEventListener("click", async function (evt) {
-        if (gameData.spinning) {
-            console.log('Already spinning');
-            return;
-        }
-
-        console.log(betData.wavesSection, betData.wavesBet);
-        const isBet = await doBet(2);
-        if (isBet) {
-            const run = (result, isForce = false, isEmulation = false) => {
-                playerData.score = 5000;
-                toggleBetNumber('plus');
-                getResult(result, -1);
-                startSpinWheel(true, isForce, isEmulation);
-            };
-
-            playSound('soundSpin');
-            run(0, false, true);
-
-            setTimeout(_ => {
-                run(3, true, false);
-            }, 10000);
-
-            const number = await waitTxNumber();
-            const section = getRandomSectionByNumber(number);
-            console.log(number, section);
-        } else {
-            // todo not spin, show error or smth
-        }
+        onBet(evt);
     });
 
     buttonReplay.cursor = "pointer";
@@ -792,7 +782,7 @@ function goPage(page) {
 
 function startGame() {
     console.log('startGame');
-    toggleWheelActive(true);
+    toggleWheelActive(false);
     toggleInstruction(true);
 
     playSound('soundStart');
@@ -1357,7 +1347,7 @@ function startSpinWheelBig(isEmulation = false) {
         toRotate = Math.abs(totalRoundNum + rotateNum);
     }
 
-    console.log(totalRound, toRotate);
+    //console.log(totalRound, toRotate);
     // totalRound - seconds
     // toRotate - rotate angle?
     if (isEmulation) {
@@ -1799,32 +1789,6 @@ function getResult(wheelNum, wheelInnerNum) {
     gameData.fixedInnerRotate = wheelInnerNum;
 }
 
-const doBet = async (section) => {
-    if ([2, 5, 6, 10, 20].indexOf(section) === -1) {
-        alert('Incorrect bet');
-        return false;
-    }
-    // todo interact with waves keeper
-    // todo return is transaction sent
-
-    return true;
-};
-
-const waitTxNumber = async () => {
-    // todo return false or number
-    return 2;
-};
-
-const getRandomSectionByNumber = (number) => {
-    wheel_arr.map((item, index) => item.index = index);
-    const items = wheel_arr.filter(item => Number(item.slot.text) === number);
-    if (items.length === 0) {
-        return false;
-    }
-
-    return items[Math.floor(Math.random() * items.length)].index;
-};
-
 /*!
  *
  * OPTIONS - This is the function that runs to mute and fullscreen
@@ -1973,3 +1937,153 @@ function share(action) {
 
     window.open(shareurl);
 }
+
+const getDappAddress = _ => {
+    return dapp[wavesEnv].address;
+};
+
+const getChainId = _ => {
+    return dapp[wavesEnv].chainId;
+};
+
+const doBet = async (section, bet) => {
+    section = Number(section);
+    bet = Number(bet);
+    const commission = 0.005;
+    const sections = [2, 5, 6, 10, 20];
+    const bets = [1, 2, 4, 8, 14];
+    if (sections.indexOf(section) === -1) {
+        alert('Incorrect section. Supported sections: ' + sections.join(", "));
+        return false;
+    }
+
+    if (bets.indexOf(bet) === -1) {
+        alert('Incorrect bet. Supported bets: ' + bets.join(", "));
+        return false;
+    }
+
+    const txData = {
+        type: 16,
+        data: {
+            fee: {
+                // todo research fee theme. server send 0.01 fee, but tx possible send with 0.005 fee
+                tokens: commission,
+                assetId: "WAVES"
+            },
+            dApp: getDappAddress(),
+            call: {
+                function: 'bet',
+                args: [
+                    {
+                        "type": "integer",
+                        "value": section
+                    }
+                ]
+            },
+            payment: [
+                {
+                    assetId: "WAVES",
+                    tokens: bet + commission
+                }
+            ]
+        }
+    };
+    console.log(txData);
+    return WavesKeeper.signAndPublishTransaction(txData)
+        .then((tx) => {
+            console.log("Ура! Я выполнил скрипт!!!");
+            return tx;
+        })
+        .catch((error) => {
+            console.error("Что-то пошло не так", error);
+            return error;
+        });
+};
+
+const getCompleteBet = async () => {
+    /*const txData = {
+        type: 4,
+        data: {
+            amount: {
+                assetId: "WAVES",
+                tokens: "1.567"
+            },
+            fee: {
+                assetId: "WAVES",
+                tokens: "0.001"
+            },
+            recipient: "test"
+        }
+    };
+    WavesKeeper.signAndPublishTransaction(txData)
+        .then((data) => {
+            //data - a line ready for sending to Waves network's node (server)
+        })
+        .catch((error) => {
+            //processing errors
+        });*/
+};
+
+const getRandomSectionByNumber = (number) => {
+    wheel_arr.map((item, index) => item.index = index);
+    const items = wheel_arr.filter(item => Number(item.slot.text) === number);
+    if (items.length === 0) {
+        return false;
+    }
+
+    return items[Math.floor(Math.random() * items.length)].index;
+};
+
+async function onBet(event) {
+    if (gameData.spinning) {
+        console.log('Already spinning');
+        return;
+    }
+
+    if (!isWavesExists()) {
+        alert('Please, install Waves Keeper');
+        return;
+    }
+
+    console.log(betData.wavesSection, betData.wavesBet);
+
+    const run = (result, isForce = false, isEmulation = false) => {
+        playerData.score = 5000;
+        toggleBetNumber('plus');
+        getResult(result, -1);
+        startSpinWheel(true, isForce, isEmulation);
+    };
+
+    playSound('soundSpin');
+    run(0, false, true);
+    const isBet = await doBet(betData.wavesSection, betData.wavesBet);
+    console.log(isBet);
+
+    /*setTimeout(_ => {
+        run(3, true, false);
+    }, 10000);*/
+
+    const betInfo = await getCompleteBet();
+    console.log(betInfo);
+    const section = getRandomSectionByNumber(betInfo);
+    console.log(betInfo, section);
+    //run(3, true, false);
+}
+
+function isWavesExists() {
+    return typeof WavesKeeper !== "undefined";
+}
+
+let checkKeeper = setInterval(_ => {
+    if (typeof WavesKeeper === "undefined") {
+        console.log('Keeper not found');
+        return;
+    }
+
+    clearInterval(checkKeeper);
+    WavesKeeper.initialPromise
+        .then(keeperApi => {
+            keeperApi.publicState()
+                .then(state => console.log(state));
+        });
+}, 300);
