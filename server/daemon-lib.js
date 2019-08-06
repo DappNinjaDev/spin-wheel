@@ -56,11 +56,7 @@ const result = async (dappAddress, gameId, rsa, seed) => {
 
     const txData = invokeScript({
         dApp: dappAddress,
-        //fee: 500000,
-        fee: {
-            tokens: 500000,
-            assetId: "WAVES"
-        },
+        fee: 500000,
         call: {
             function: "result",
             args: [

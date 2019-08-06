@@ -2054,10 +2054,10 @@ async function onBet(event) {
         startSpinWheel(true, isForce, isEmulation);
     };
 
-    playSound('soundSpin');
-    run(0, false, true);
     const isBet = await doBet(betData.wavesSection, betData.wavesBet);
     console.log(isBet);
+    playSound('soundSpin');
+    run(0, false, true);
 
     /*setTimeout(_ => {
         run(3, true, false);
