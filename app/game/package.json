@@ -1,0 +1,9 @@
+{
+  "name": "game",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@waves/waves-transactions": "^3.16.2"
+  }
+}

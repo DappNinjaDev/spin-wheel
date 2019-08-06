@@ -40,7 +40,8 @@ var secondWheelRadius = 100; //second wheel radius for slot color feature
 const dapp = {
     testnet: {
         address: '3N8M61KCm8G72mK8PjacFbnnxdbFsyqQDeT',
-        chainId: 'T'
+        chainId: 'T',
+        url: 'https://testnodes.wavesnodes.com',
     },
     prod: {
         address: '',
@@ -1946,6 +1947,10 @@ const getChainId = _ => {
     return dapp[wavesEnv].chainId;
 };
 
+const getUrl = _ => {
+    return dapp[wavesEnv].url;
+};
+
 const doBet = async (section, bet) => {
     section = Number(section);
     bet = Number(bet);
@@ -1989,39 +1994,40 @@ const doBet = async (section, bet) => {
         }
     };
     console.log(txData);
+
     return WavesKeeper.signAndPublishTransaction(txData)
-        .then((tx) => {
-            console.log("Ура! Я выполнил скрипт!!!");
-            return tx;
-        })
-        .catch((error) => {
-            console.error("Что-то пошло не так", error);
-            return error;
-        });
+        .then(JSON.parse);
 };
 
-const getCompleteBet = async () => {
-    /*const txData = {
-        type: 4,
-        data: {
-            amount: {
-                assetId: "WAVES",
-                tokens: "1.567"
-            },
-            fee: {
-                assetId: "WAVES",
-                tokens: "0.001"
-            },
-            recipient: "test"
+const sleep = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+};
+
+const getCompleteBet = async (id) => {
+    let info = null;
+    for (let i = 0; i < 100; i++) {
+        try {
+            info = await WavesTransactions.nodeInteraction.accountDataByKey(`${id}_STATUS`, getDappAddress(), getUrl());
+            if (info && info.value !== "NEW") {
+                let sectionInfo = await WavesTransactions.nodeInteraction.accountDataByKey(`${id}_RESULT`, getDappAddress(), getUrl());
+                info = {
+                    status: info.value,
+                    resultSection: sectionInfo.value
+                };
+
+                break;
+            }
+        } catch (e) {
         }
-    };
-    WavesKeeper.signAndPublishTransaction(txData)
-        .then((data) => {
-            //data - a line ready for sending to Waves network's node (server)
-        })
-        .catch((error) => {
-            //processing errors
-        });*/
+
+        await sleep(1000);
+    }
+
+    if (!info) {
+        throw new Error(`Tx ${id} not found`);
+    }
+
+    return info;
 };
 
 const getRandomSectionByNumber = (number) => {
@@ -2045,7 +2051,7 @@ async function onBet(event) {
         return;
     }
 
-    console.log(betData.wavesSection, betData.wavesBet);
+    //console.log(betData.wavesSection, betData.wavesBet);
 
     const run = (result, isForce = false, isEmulation = false) => {
         playerData.score = 5000;
@@ -2054,20 +2060,26 @@ async function onBet(event) {
         startSpinWheel(true, isForce, isEmulation);
     };
 
-    const isBet = await doBet(betData.wavesSection, betData.wavesBet);
-    console.log(isBet);
-    playSound('soundSpin');
-    run(0, false, true);
+    try {
+        const betInfo = await doBet(betData.wavesSection, betData.wavesBet);
+        console.log(betInfo);
+        playSound('soundSpin');
+        run(0, false, true);
 
-    /*setTimeout(_ => {
-        run(3, true, false);
-    }, 10000);*/
+        const completeBetInfo = await getCompleteBet(betInfo.id);
+        console.log(completeBetInfo);
+        if (completeBetInfo.status === "WIN") {
+            // win
+        } else {
+            // loose
+        }
 
-    const betInfo = await getCompleteBet();
-    console.log(betInfo);
-    const section = getRandomSectionByNumber(betInfo);
-    console.log(betInfo, section);
-    //run(3, true, false);
+        const section = getRandomSectionByNumber(completeBetInfo.resultSection);
+        //console.log(completeBetInfo, section);
+        run(section, true, false);
+    } catch (e) {
+        alert(e.message);
+    }
 }
 
 function isWavesExists() {
