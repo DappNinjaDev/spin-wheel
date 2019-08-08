@@ -15,7 +15,7 @@ var spinSpeed = 18; //wheel spinning speed
 var touchSpin = false; //touch to spin (true/false)
 
 //status display text
-var statusText_arr = ['SPIN YOUR FOTUNE', 'SPINNING...', '[NUMBER]PTS', 'WIN [NUMBER]PTS', 'BETTER LUCK NEXT TIME!', 'JACKPOT [NUMBER]', 'YOU LOSS ALL POINTS'];
+var statusText_arr = ['SPIN YOUR FOTUNE', 'SPINNING...', '[NUMBER]PTS', 'WIN [NUMBER] WAVES', 'BETTER LUCK NEXT TIME!', 'JACKPOT [NUMBER]', 'YOU LOSS YOUR BET'];
 var defaultStatusBgColor = '#655643'; //status bacgkround color
 var creditText = '[NUMBER]PTS'; //point display text
 
@@ -63,7 +63,8 @@ var wheel_arr = [
         color: '#475c70',
         regX: 1,
         regY: 223,
-        point: 250,
+        point: 0,
+        //type: 1,
         type: 0,
         percent: 15,
         slot: {
@@ -83,7 +84,7 @@ var wheel_arr = [
         color: '#da2027',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 20,
         type: 0,
         percent: 15,
         slot: {
@@ -103,7 +104,7 @@ var wheel_arr = [
         color: '#449bd4',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 2,
         type: 0,
         percent: 15,
         slot: {
@@ -123,7 +124,7 @@ var wheel_arr = [
         color: '#fdcc09',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 6,
         type: 0,
         percent: 15,
         slot: {
@@ -143,7 +144,7 @@ var wheel_arr = [
         color: '#449bd4',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 2,
         type: 0,
         percent: 15,
         slot: {
@@ -164,7 +165,7 @@ var wheel_arr = [
         color: '#f37621',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 5,
         type: 0,
         percent: 15,
         slot: {
@@ -184,7 +185,7 @@ var wheel_arr = [
         color: '#449bd4',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 2,
         type: 0,
         percent: 15,
         slot: {
@@ -204,7 +205,7 @@ var wheel_arr = [
         color: '#fdcc09',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 6,
         type: 0,
         percent: 15,
         slot: {
@@ -224,7 +225,7 @@ var wheel_arr = [
         color: '#449bd4',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 2,
         type: 0,
         percent: 15,
         slot: {
@@ -244,7 +245,7 @@ var wheel_arr = [
         color: '#f37621',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 5,
         type: 0,
         percent: 15,
         slot: {
@@ -264,7 +265,7 @@ var wheel_arr = [
         color: '#449bd4',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 2,
         type: 0,
         percent: 15,
         slot: {
@@ -284,7 +285,7 @@ var wheel_arr = [
         color: '#fdcc09',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 6,
         type: 0,
         percent: 15,
         slot: {
@@ -304,7 +305,7 @@ var wheel_arr = [
         color: '#449bd4',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 2,
         type: 0,
         percent: 15,
         slot: {
@@ -324,7 +325,7 @@ var wheel_arr = [
         color: '#f37621',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 5,
         type: 0,
         percent: 15,
         slot: {
@@ -344,7 +345,7 @@ var wheel_arr = [
         color: '#449bd4',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 2,
         type: 0,
         percent: 15,
         slot: {
@@ -364,7 +365,7 @@ var wheel_arr = [
         color: '#7db544',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 10,
         type: 0,
         percent: 15,
         slot: {
@@ -384,7 +385,7 @@ var wheel_arr = [
         color: '#449bd4',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 2,
         type: 0,
         percent: 15,
         slot: {
@@ -404,7 +405,7 @@ var wheel_arr = [
         color: '#7db544',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 10,
         type: 0,
         percent: 15,
         slot: {
@@ -424,7 +425,7 @@ var wheel_arr = [
         color: '#449bd4',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 2,
         type: 0,
         percent: 15,
         slot: {
@@ -444,7 +445,7 @@ var wheel_arr = [
         color: '#f37621',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 5,
         type: 0,
         percent: 15,
         slot: {
@@ -464,7 +465,7 @@ var wheel_arr = [
         color: '#449bd4',
         regX: 1,
         regY: 223,
-        point: 500,
+        point: 2,
         type: 0,
         percent: 15,
         slot: {
@@ -1230,6 +1231,7 @@ function drawWheel() {
  *
  */
 function startSpinWheel(con, isForce = false, isEmulation = false) {
+    console.log(playerData);
     if (!isForce) {
         if (gameData.spinning) {
             return;
@@ -1278,7 +1280,9 @@ function startSpinWheel(con, isForce = false, isEmulation = false) {
         }
     }
 
-    //playSoundLoop('soundSpinning');
+    if (!isEmulation) {
+        //playSoundLoop('soundSpinning');
+    }
 
     if (con) {
         gameData.spinDirection = spinDirection;
@@ -1486,120 +1490,55 @@ function checkWheelScore() {
     TweenMax.to(playerData, 1, {
         overwrite: true, onComplete: function () {
             playSound('soundTone');
-            if (secondWheel) {
-                var wheelInnerSegmentNumber = wheelSecond_arr[gameData.wheelInnerNum].mutiply;
-                if (wheelSegmentType == 1) {
-                    //loss all
-                    playSound('soundLossall');
-                    statusTxt.text = statusText_arr[6];
-                    animateLights('lose');
-                    gameData.spinning = false;
-                    playerData.score = playerData.bet = 0;
-                    TweenMax.to(playerData, 1, {point: playerData.score, overwrite: true, onUpdate: updateStat});
-                    gameData.shape.style = wheel_arr[gameData.wheelNum].color;
 
-                    checkGameEnd();
-                } else {
-                    statusTxt.text = statusText_arr[2].replace('[NUMBER]', addCommas(wheelSegmentNumber));
-                    var speedTween = .5;
-                    TweenMax.to(itemStatusBg, speedTween, {
-                        overwrite: true, onComplete: function () {
-                            playSound('soundTone');
-                            statusTxt.text = statusText_arr[2].replace('[NUMBER]', addCommas(wheelSegmentNumber)) + ' x ' + wheelInnerSegmentNumber;
+            if (wheelSegmentType == 1) {
+                //loss all
+                playSound('soundLossall');
+                statusTxt.text = statusText_arr[6];
+                animateLights('lose');
+                playerData.score = playerData.bet = 0;
+                TweenMax.to(playerData, 1, {point: playerData.score, overwrite: true, onUpdate: updateStat});
+                gameData.shape.style = wheel_arr[gameData.wheelNum].color;
+                gameData.spinning = false;
 
-                            TweenMax.to(itemStatusBg, speedTween, {
-                                overwrite: true, onComplete: function () {
-                                    playSound('soundTone');
-                                    var winPoint = wheelSegmentNumber * wheelInnerSegmentNumber;
-                                    if (!gamePlayType) {
-                                        winPoint = winPoint * playerData.bet;
-                                        playerData.bet = 0;
-                                    }
-                                    statusTxt.text = statusText_arr[3].replace('[NUMBER]', addCommas(winPoint));
-
-                                    if (winPoint > 0) {
-                                        //win
-                                        if (wheelSegmentType == 2) {
-                                            playSound('soundJackpot');
-                                            statusTxt.text = statusText_arr[5].replace('[NUMBER]', addCommas(winPoint));
-                                        } else {
-                                            playSound('soundWin');
-                                        }
-
-                                        gameData.shape.style = wheel_arr[gameData.wheelNum].color;
-                                        playerData.score += winPoint;
-
-                                        animateLights('win');
-                                        TweenMax.to(playerData, 1, {
-                                            point: playerData.score,
-                                            overwrite: true,
-                                            onUpdate: updateStat
-                                        });
-                                    } else {
-                                        playSound('soundLoss');
-                                        //no win
-                                        statusTxt.text = statusText_arr[4];
-                                        animateLights('lose');
-                                        if (!gamePlayType) {
-                                            updateStat();
-                                        }
-                                    }
-
-                                    gameData.spinning = false;
-                                    checkGameEnd();
-                                }
-                            });
-                        }
-                    });
-                }
+                checkGameEnd();
             } else {
-                if (wheelSegmentType == 1) {
-                    //loss all
-                    playSound('soundLossall');
-                    statusTxt.text = statusText_arr[6];
-                    animateLights('lose');
-                    playerData.score = playerData.bet = 0;
-                    TweenMax.to(playerData, 1, {point: playerData.score, overwrite: true, onUpdate: updateStat});
+                /*var winPoint = wheelSegmentNumber;
+                if (!gamePlayType) {
+                    winPoint = winPoint * playerData.bet;
+                    playerData.bet = 0;
+                }*/
+                var winPoint = wheelSegmentNumber === betData.wavesSection ? wheelSegmentNumber : 0;
+                statusTxt.text = statusText_arr[3].replace('[NUMBER]', addCommas(winPoint));
+
+                if (winPoint > 0) {
+                    //win
+                    /*if (wheelSegmentType == 2) {
+                        playSound('soundJackpot');
+                        statusTxt.text = statusText_arr[5].replace('[NUMBER]', addCommas(winPoint));
+                    } else {*/
+                    playSound('soundWin');
+                    //}
+
                     gameData.shape.style = wheel_arr[gameData.wheelNum].color;
-                    gameData.spinning = false;
+                    playerData.score += winPoint;
 
-                    checkGameEnd();
+                    animateLights('win');
+                    TweenMax.to(playerData, 1, {point: playerData.score, overwrite: true, onUpdate: updateStat});
                 } else {
-                    var winPoint = wheelSegmentNumber;
+                    //no win
+                    playSound('soundLoss');
+                    statusTxt.text = statusText_arr[4];
+                    animateLights('lose');
                     if (!gamePlayType) {
-                        winPoint = winPoint * playerData.bet;
-                        playerData.bet = 0;
+                        updateStat();
                     }
-                    statusTxt.text = statusText_arr[3].replace('[NUMBER]', addCommas(winPoint));
-
-                    if (winPoint > 0) {
-                        //win
-                        if (wheelSegmentType == 2) {
-                            playSound('soundJackpot');
-                            statusTxt.text = statusText_arr[5].replace('[NUMBER]', addCommas(winPoint));
-                        } else {
-                            playSound('soundWin');
-                        }
-
-                        gameData.shape.style = wheel_arr[gameData.wheelNum].color;
-                        playerData.score += winPoint;
-
-                        animateLights('win');
-                        TweenMax.to(playerData, 1, {point: playerData.score, overwrite: true, onUpdate: updateStat});
-                    } else {
-                        //no win
-                        playSound('soundLoss');
-                        statusTxt.text = statusText_arr[4];
-                        animateLights('lose');
-                        if (!gamePlayType) {
-                            updateStat();
-                        }
-                    }
-
-                    gameData.spinning = false;
-                    checkGameEnd();
                 }
+
+                gameData.spinning = false;
+                checkGameEnd();
             }
+
         }
     });
 }
@@ -2054,8 +1993,10 @@ async function onBet(event) {
     //console.log(betData.wavesSection, betData.wavesBet);
 
     const run = (result, isForce = false, isEmulation = false) => {
-        playerData.score = 5000;
-        toggleBetNumber('plus');
+        playerData.bet = 1;
+        playerData.score = 100;
+        console.log(playerData);
+        //toggleBetNumber('plus');
         getResult(result, -1);
         startSpinWheel(true, isForce, isEmulation);
     };
