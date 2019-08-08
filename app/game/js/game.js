@@ -1231,7 +1231,6 @@ function drawWheel() {
  *
  */
 function startSpinWheel(con, isForce = false, isEmulation = false) {
-    console.log(playerData);
     if (!isForce) {
         if (gameData.spinning) {
             return;
@@ -1995,7 +1994,6 @@ async function onBet(event) {
     const run = (result, isForce = false, isEmulation = false) => {
         playerData.bet = 1;
         playerData.score = 100;
-        console.log(playerData);
         //toggleBetNumber('plus');
         getResult(result, -1);
         startSpinWheel(true, isForce, isEmulation);
@@ -2027,6 +2025,15 @@ function isWavesExists() {
     return typeof WavesKeeper !== "undefined";
 }
 
+let updateBalanceInterval = null;
+const updateBalance = async () => {
+    try {
+        const state = await WavesKeeper.publicState();
+        userBalance.text = `Balance: ${state.account.balance.available / (10 ** 8)} WAVES`;
+    } catch (error) {
+    }
+};
+
 let checkKeeper = setInterval(_ => {
     if (typeof WavesKeeper === "undefined") {
         console.log('Keeper not found');
@@ -2038,5 +2045,6 @@ let checkKeeper = setInterval(_ => {
         .then(keeperApi => {
             keeperApi.publicState()
                 .then(state => console.log(state));
+            updateBalanceInterval = setInterval(updateBalance, 1000);
         });
 }, 300);

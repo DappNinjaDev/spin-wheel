@@ -172,6 +172,16 @@ function buildGameCanvas() {
     instructionTxt.x = canvasW / 100 * 28;
     instructionTxt.y = canvasH / 100 * 88;
 
+    userBalance = new createjs.Text();
+    userBalance.font = "30px libel_suitregular";
+    userBalance.color = "#fff";
+    userBalance.textAlign = "left";
+    userBalance.textBaseline = 'alphabetic';
+    userBalance.text = 'Balance: ...';
+    userBalance.lineHeight = 32;
+    userBalance.x = canvasW / 100 * 9;
+    userBalance.y = canvasH / 100 * 16;
+
     var _frameW = 22;
     var _frameH = 22;
     var _frame = {"regX": _frameW / 2, "regY": _frameH / 2, "height": _frameH, "count": 2, "width": _frameW};
@@ -300,7 +310,7 @@ function buildGameCanvas() {
 
     gameContainer.addChild(itemPin, itemLightAnimate, itemTicket, itemSide, itemGame1, itemGame2, itemTicketMask,
         ticketContainer, creditTxt, chanceTxt, betTxt, buttonMinus, buttonPlus, buttonSpin, itemStatusBg, statusTxt,
-        instructionTxt,
+        instructionTxt, userBalance,
         bet1, bet2, bet4, bet8, bet14,
         section2, section5, section6, section10, section20
     );
