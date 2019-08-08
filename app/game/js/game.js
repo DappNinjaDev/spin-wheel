@@ -1986,7 +1986,7 @@ async function onBet(event) {
     }
 
     if (!isWavesExists()) {
-        alert('Please, install Waves Keeper');
+        $('#installKeeperModal').modal('show');
         return;
     }
 

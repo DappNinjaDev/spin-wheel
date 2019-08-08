@@ -145,7 +145,7 @@ function buildGameCanvas() {
         centerReg(obj);
         obj.x = canvasW / 100 * (13 + index * 7.5);
         obj.y = canvasH / 100 * 58;
-        window[item].addChild(createHighlight(obj.x, obj.y));
+        window[item].addChild(createHighlight(obj.x, obj.y, -44, -45, 89, 89));
     });
 
     itemStatusBg = new createjs.Shape();
