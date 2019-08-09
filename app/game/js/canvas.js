@@ -320,7 +320,7 @@ function buildGameCanvas() {
         resultContainer.addChild(resultShareTxt, buttonFacebook, buttonTwitter, buttonGoogle);
     }
 
-    canvasContainer.addChild(bg, wheelContainer, mainContainer, gameContainer, resultContainer, /*buttonFullscreen,*/ buttonSoundOn, buttonSoundOff, guideline);
+    canvasContainer.addChild(/*bg,*/ wheelContainer, mainContainer, gameContainer, resultContainer, /*buttonFullscreen,*/ buttonSoundOn, buttonSoundOff, guideline);
     stage.addChild(canvasContainer);
 
     resizeCanvas();

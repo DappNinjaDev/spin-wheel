@@ -1989,6 +1989,12 @@ async function onBet(event) {
         return;
     }
 
+    if (!isCorrectNetwork()) {
+        alert(`Choose correct network: ${wavesEnv}`);
+
+        return;
+    }
+
     //console.log(betData.wavesSection, betData.wavesBet);
 
     const run = (result, isForce = false, isEmulation = false) => {
@@ -2021,15 +2027,21 @@ async function onBet(event) {
     }
 }
 
-function isWavesExists() {
+const isWavesExists = _ => {
     return typeof WavesKeeper !== "undefined";
-}
+};
+
+const isCorrectNetwork = _ => {
+    return currentState.account.balance.network === wavesEnv;
+};
 
 let updateBalanceInterval = null;
+let currentState = {};
 const updateBalance = async () => {
     try {
         const state = await WavesKeeper.publicState();
-        userBalance.text = `Balance: ${state.account.balance.available / (10 ** 8)} WAVES`;
+        currentState = state;
+        userBalance.text = `Balance: ${(state.account.balance.available / (10 ** 8)).toFixed(2)} WAVES`;
     } catch (error) {
     }
 };
@@ -2044,7 +2056,10 @@ let checkKeeper = setInterval(_ => {
     WavesKeeper.initialPromise
         .then(keeperApi => {
             keeperApi.publicState()
-                .then(state => console.log(state));
-            updateBalanceInterval = setInterval(updateBalance, 1000);
+                .then(state => {
+                    currentState = state;
+                    console.log(state);
+                    updateBalanceInterval = setInterval(updateBalance, 1000);
+                });
         });
 }, 300);
