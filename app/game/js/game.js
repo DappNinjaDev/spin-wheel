@@ -93,7 +93,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '20',
+            text: 'x20',
             textY: 140,
             textColor: '#fff'
         }
@@ -113,7 +113,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '2',
+            text: 'x2',
             textY: 140,
             textColor: '#fff'
         }
@@ -133,7 +133,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '6',
+            text: 'x6',
             textY: 140,
             textColor: '#fff'
         }
@@ -153,7 +153,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '2',
+            text: 'x2',
             textY: 140,
             textColor: '#fff'
         }
@@ -174,7 +174,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '5',
+            text: 'x5',
             textY: 140,
             textColor: '#fff'
         }
@@ -194,7 +194,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '2',
+            text: 'x2',
             textY: 140,
             textColor: '#fff'
         }
@@ -214,7 +214,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '6',
+            text: 'x6',
             textY: 140,
             textColor: '#fff'
         }
@@ -234,7 +234,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '2',
+            text: 'x2',
             textY: 140,
             textColor: '#fff'
         }
@@ -254,7 +254,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '5',
+            text: 'x5',
             textY: 140,
             textColor: '#fff'
         }
@@ -274,7 +274,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '2',
+            text: 'x2',
             textY: 140,
             textColor: '#fff'
         }
@@ -294,7 +294,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '6',
+            text: 'x6',
             textY: 140,
             textColor: '#fff'
         }
@@ -314,7 +314,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '2',
+            text: 'x2',
             textY: 140,
             textColor: '#fff'
         }
@@ -334,7 +334,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '5',
+            text: 'x5',
             textY: 140,
             textColor: '#fff'
         }
@@ -354,7 +354,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '2',
+            text: 'x2',
             textY: 140,
             textColor: '#fff'
         }
@@ -374,7 +374,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '10',
+            text: 'x10',
             textY: 140,
             textColor: '#fff'
         }
@@ -394,7 +394,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '2',
+            text: 'x2',
             textY: 140,
             textColor: '#fff'
         }
@@ -414,7 +414,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '10',
+            text: 'x10',
             textY: 140,
             textColor: '#fff'
         }
@@ -434,7 +434,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '2',
+            text: 'x2',
             textY: 140,
             textColor: '#fff'
         }
@@ -454,7 +454,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '5',
+            text: 'x5',
             textY: 140,
             textColor: '#fff'
         }
@@ -474,7 +474,7 @@ var wheel_arr = [
             stroke: 5,
             strokeColor: '#fff',
             fontSize: 35,
-            text: '2',
+            text: 'x2',
             textY: 140,
             textColor: '#fff'
         }
@@ -1507,7 +1507,7 @@ function checkWheelScore() {
                     winPoint = winPoint * playerData.bet;
                     playerData.bet = 0;
                 }*/
-                var winPoint = wheelSegmentNumber === betData.wavesSection ? wheelSegmentNumber : 0;
+                var winPoint = wheelSegmentNumber === betData.wavesSection ? betData.wavesSection * betData.wavesBet : 0;
                 statusTxt.text = statusText_arr[3].replace('[NUMBER]', addCommas(winPoint));
 
                 if (winPoint > 0) {
@@ -1969,8 +1969,13 @@ const getCompleteBet = async (id) => {
 };
 
 const getRandomSectionByNumber = (number) => {
+    number = Number(number);
+    if (number === 0) {
+        return 0;
+    }
+
     wheel_arr.map((item, index) => item.index = index);
-    const items = wheel_arr.filter(item => Number(item.slot.text) === number);
+    const items = wheel_arr.filter(item => item.slot.text === `x${number}`);
     if (items.length === 0) {
         return false;
     }
