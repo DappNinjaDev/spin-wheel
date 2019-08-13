@@ -1253,7 +1253,8 @@ function startSpinWheel(con, isForce = false, isEmulation = false) {
     gameData.wheelNum = -1;
     gameData.wheelInnerNum = -1;
     gameData.showStatus = false;
-    statusTxt.text = statusText_arr[1];
+    //statusTxt.text = statusText_arr[1];
+    statusTxt.text = getText(KEY_SPINNING).toUpperCase();
     animateSpinStatus(statusTxt, true);
     gameData.shape.style = defaultStatusBgColor;
 
@@ -1510,7 +1511,8 @@ function checkWheelScore() {
                     playerData.bet = 0;
                 }*/
                 var winPoint = wheelSegmentNumber === betData.wavesSection ? betData.wavesSection * betData.wavesBet : 0;
-                statusTxt.text = statusText_arr[3].replace('[NUMBER]', addCommas(winPoint));
+                //statusTxt.text = statusText_arr[3].replace('[NUMBER]', addCommas(winPoint));
+                statusTxt.text = getText(KEY_WIN_WAVES, {count: addCommas(winPoint)}).toUpperCase();
 
                 if (winPoint > 0) {
                     //win
@@ -1529,7 +1531,8 @@ function checkWheelScore() {
                 } else {
                     //no win
                     playSound('soundLoss');
-                    statusTxt.text = statusText_arr[4];
+                    //statusTxt.text = statusText_arr[4];
+                    statusTxt.text = getText(KEY_FAIL).toUpperCase();
                     animateLights('lose');
                     if (!gamePlayType) {
                         updateStat();
@@ -2036,8 +2039,10 @@ async function onBet(event) {
         console.log(completeBetInfo);
         if (completeBetInfo.status === "WIN") {
             // win
+            ymGoal('bet_win', completeBetInfo);
         } else {
             // loose
+            ymGoal('bet_fail', completeBetInfo);
         }
 
         const section = getRandomSectionByNumber(completeBetInfo.resultSection);
