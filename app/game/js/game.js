@@ -44,8 +44,9 @@ const dapp = {
         url: 'https://testnodes.wavesnodes.com',
     },
     mainnet: {
-        address: '',
-        chainId: ''
+        address: '3N8M61KCm8G72mK8PjacFbnnxdbFsyqQDeT',
+        chainId: 'T',
+        url: 'https://testnodes.wavesnodes.com',
     },
     custom: {
         address: '',
