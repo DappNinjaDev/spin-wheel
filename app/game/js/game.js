@@ -53,7 +53,7 @@ const dapp = {
     }
 };
 
-const wavesEnv = 'testnet';
+const wavesEnv = document.location.host === 'luckywheel.pro' ? 'mainnet' : 'testnet';
 
 var segmentItemFontSize = 35;
 var segmentItemPrefix = '';
