@@ -5,6 +5,9 @@ var stage
 var canvasW = 0;
 var canvasH = 0;
 
+// previous libel_suitregular
+var defaultFont = 'Oswald';
+
 /*!
  *
  * START GAME CANVAS - This is the function that runs to setup game canvas
@@ -154,7 +157,7 @@ function buildGameCanvas() {
     itemStatusBg.graphics.drawRoundRectComplex(canvasW / 100 * 13.9, canvasH / 100 * 22.3, 360, 63, 5, 5, 5, 5);
 
     statusTxt = new createjs.Text();
-    statusTxt.font = "45px libel_suitregular";
+    statusTxt.font = "45px " + defaultFont;
     statusTxt.color = "#fff";
     statusTxt.textAlign = "center";
     statusTxt.textBaseline = 'alphabetic';
@@ -163,7 +166,7 @@ function buildGameCanvas() {
     statusTxt.y = canvasH / 100 * 29;
 
     instructionTxt = new createjs.Text();
-    instructionTxt.font = "30px libel_suitregular";
+    instructionTxt.font = "30px " + defaultFont;
     instructionTxt.color = "#fff";
     instructionTxt.textAlign = "center";
     instructionTxt.textBaseline = 'alphabetic';
@@ -173,7 +176,7 @@ function buildGameCanvas() {
     instructionTxt.y = canvasH / 100 * 88;
 
     userBalance = new createjs.Text();
-    userBalance.font = "30px libel_suitregular";
+    userBalance.font = "30px " + defaultFont;
     userBalance.color = "#fff";
     userBalance.textAlign = "left";
     userBalance.textBaseline = 'alphabetic';
@@ -211,7 +214,7 @@ function buildGameCanvas() {
     ticketContainer.mask = itemTicketMask;
 
     chanceTxt = new createjs.Text();
-    chanceTxt.font = "45px libel_suitregular";
+    chanceTxt.font = "45px " + defaultFont;
     chanceTxt.color = "#652312";
     chanceTxt.textAlign = "center";
     chanceTxt.textBaseline = 'alphabetic';
@@ -220,7 +223,7 @@ function buildGameCanvas() {
     chanceTxt.y = canvasH / 100 * 56;
 
     betTxt = new createjs.Text();
-    betTxt.font = "45px libel_suitregular";
+    betTxt.font = "45px " + defaultFont;
     betTxt.color = "#652312";
     betTxt.textAlign = "center";
     betTxt.textBaseline = 'alphabetic';
@@ -229,7 +232,7 @@ function buildGameCanvas() {
     betTxt.y = canvasH / 100 * 56;
 
     creditTxt = new createjs.Text();
-    creditTxt.font = "45px libel_suitregular";
+    creditTxt.font = "45px " + defaultFont;
     creditTxt.color = "#652312";
     creditTxt.textAlign = "center";
     creditTxt.textBaseline = 'alphabetic';
@@ -244,7 +247,7 @@ function buildGameCanvas() {
     itemResultSide.y = canvasH / 100 * 50;
 
     resultTitleTxt = new createjs.Text();
-    resultTitleTxt.font = "60px libel_suitregular";
+    resultTitleTxt.font = "60px " + defaultFont;
     resultTitleTxt.color = "#652312";
     resultTitleTxt.textAlign = "center";
     resultTitleTxt.textBaseline = 'alphabetic';
@@ -253,7 +256,7 @@ function buildGameCanvas() {
     resultTitleTxt.y = canvasH / 100 * 35;
 
     resultScoreTxt = new createjs.Text();
-    resultScoreTxt.font = "45px libel_suitregular";
+    resultScoreTxt.font = "45px " + defaultFont;
     resultScoreTxt.color = "#652312";
     resultScoreTxt.textAlign = "center";
     resultScoreTxt.textBaseline = 'alphabetic';
@@ -262,7 +265,7 @@ function buildGameCanvas() {
     resultScoreTxt.y = canvasH / 100 * 43.5;
 
     resultShareTxt = new createjs.Text();
-    resultShareTxt.font = "20px libel_suitregular";
+    resultShareTxt.font = "20px " + defaultFont;
     resultShareTxt.color = "#666";
     resultShareTxt.textAlign = "center";
     resultShareTxt.textBaseline = 'alphabetic';

@@ -25,13 +25,13 @@ var gamePlayType = false;
 //game1 (spin using chances)
 var gameChance = 7; //total chances
 var chancesText = 'x [NUMBER]'; //chances display text
-var instructionTxt1 = 'You have total 7 ticket chances,\nspin the wheel or tap on the spin button to begin.'; //instruction
+var instructionTxt1 = 'You have total 7 ticket chances,\nspin the wheel.'; //instruction
 
 //game2 (spin using bet number)
 var gameBetPoint = 500; //total bet point
 var gameCanBet = 10; //total bet increase
 var gameMaxBet = 1000; //max bet
-var instructionTxt2 = 'First place your bets,\nspin the wheel or tap on the spin button to begin.'; //instruction
+//var instructionTxt2 = 'Place your bet, spin the wheel.'; //instruction
 
 //wheel radius
 var firstWheelRadius = 230; //first wheel radius for slot color feature
@@ -43,7 +43,7 @@ const dapp = {
         chainId: 'T',
         url: 'https://testnodes.wavesnodes.com',
     },
-    prod: {
+    mainnet: {
         address: '',
         chainId: ''
     },
@@ -55,6 +55,8 @@ const dapp = {
 
 const wavesEnv = 'testnet';
 
+var segmentItemFontSize = 35;
+var segmentItemPrefix = '';
 //wheel segments
 var wheel_arr = [
     {
@@ -72,7 +74,7 @@ var wheel_arr = [
             highlightColor: '#748591',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
+            fontSize: segmentItemFontSize,
             text: '0',
             textY: 140,
             textColor: '#fff'
@@ -92,8 +94,8 @@ var wheel_arr = [
             highlightColor: '#ff5d67',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x20',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '20',
             textY: 140,
             textColor: '#fff'
         }
@@ -112,8 +114,8 @@ var wheel_arr = [
             highlightColor: '#51baff',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x2',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '2',
             textY: 140,
             textColor: '#fff'
         }
@@ -132,8 +134,8 @@ var wheel_arr = [
             highlightColor: '#fddd8a',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x6',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '6',
             textY: 140,
             textColor: '#fff'
         }
@@ -152,8 +154,8 @@ var wheel_arr = [
             highlightColor: '#51baff',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x2',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '2',
             textY: 140,
             textColor: '#fff'
         }
@@ -173,8 +175,8 @@ var wheel_arr = [
             highlightColor: '#ff7c22',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x5',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '5',
             textY: 140,
             textColor: '#fff'
         }
@@ -193,8 +195,8 @@ var wheel_arr = [
             highlightColor: '#51baff',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x2',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '2',
             textY: 140,
             textColor: '#fff'
         }
@@ -213,8 +215,8 @@ var wheel_arr = [
             highlightColor: '#fddd8a',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x6',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '6',
             textY: 140,
             textColor: '#fff'
         }
@@ -233,8 +235,8 @@ var wheel_arr = [
             highlightColor: '#51baff',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x2',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '2',
             textY: 140,
             textColor: '#fff'
         }
@@ -253,8 +255,8 @@ var wheel_arr = [
             highlightColor: '#ff7c22',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x5',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '5',
             textY: 140,
             textColor: '#fff'
         }
@@ -273,8 +275,8 @@ var wheel_arr = [
             highlightColor: '#51baff',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x2',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '2',
             textY: 140,
             textColor: '#fff'
         }
@@ -293,8 +295,8 @@ var wheel_arr = [
             highlightColor: '#fddd8a',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x6',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '6',
             textY: 140,
             textColor: '#fff'
         }
@@ -313,8 +315,8 @@ var wheel_arr = [
             highlightColor: '#51baff',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x2',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '2',
             textY: 140,
             textColor: '#fff'
         }
@@ -333,8 +335,8 @@ var wheel_arr = [
             highlightColor: '#ff7c22',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x5',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '5',
             textY: 140,
             textColor: '#fff'
         }
@@ -353,8 +355,8 @@ var wheel_arr = [
             highlightColor: '#51baff',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x2',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '2',
             textY: 140,
             textColor: '#fff'
         }
@@ -373,8 +375,8 @@ var wheel_arr = [
             highlightColor: '#99dd53',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x10',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '10',
             textY: 140,
             textColor: '#fff'
         }
@@ -393,8 +395,8 @@ var wheel_arr = [
             highlightColor: '#51baff',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x2',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '2',
             textY: 140,
             textColor: '#fff'
         }
@@ -413,8 +415,8 @@ var wheel_arr = [
             highlightColor: '#99dd53',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x10',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '10',
             textY: 140,
             textColor: '#fff'
         }
@@ -433,8 +435,8 @@ var wheel_arr = [
             highlightColor: '#51baff',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x2',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '2',
             textY: 140,
             textColor: '#fff'
         }
@@ -453,8 +455,8 @@ var wheel_arr = [
             highlightColor: '#ff7c22',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x5',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '5',
             textY: 140,
             textColor: '#fff'
         }
@@ -473,8 +475,8 @@ var wheel_arr = [
             highlightColor: '#51baff',
             stroke: 5,
             strokeColor: '#fff',
-            fontSize: 35,
-            text: 'x2',
+            fontSize: segmentItemFontSize,
+            text: segmentItemPrefix + '2',
             textY: 140,
             textColor: '#fff'
         }
@@ -835,8 +837,7 @@ function startGame() {
     creditTxt.visible = false;
 
 
-    // top: spin your fotunen
-    statusTxt.text = statusText_arr[0];
+    statusTxt.text = getText(KEY_SPIN_YOUR_FORTUNE).toUpperCase();
     gameData.shape.style = defaultStatusBgColor;
     gameData.touch = false;
     gameData.paused = false;
@@ -917,7 +918,8 @@ function toggleInstruction(con) {
         if (gamePlayType) {
             instructionTxt.text = instructionTxt1;
         } else {
-            instructionTxt.text = instructionTxt2;
+            //instructionTxt.text = instructionTxt2;
+            instructionTxt.text = getText(KEY_INSTRUCTION_BET_AND_SPIN);
         }
         instructionTxt.alpha = 0;
         TweenMax.to(instructionTxt, .2, {delay: 1, alpha: 1, overwrite: true});
@@ -1131,7 +1133,7 @@ function drawWheel() {
             //text
             if (wheel_arr[n].slot.text != '') {
                 $.wheel['slotText' + n] = new createjs.Text();
-                $.wheel['slotText' + n].font = wheel_arr[n].slot.fontSize + "px libel_suitregular";
+                $.wheel['slotText' + n].font = wheel_arr[n].slot.fontSize + "px " + defaultFont;
                 $.wheel['slotText' + n].lineHeight = wheel_arr[n].slot.fontSize;
                 $.wheel['slotText' + n].color = wheel_arr[n].slot.textColor;
                 $.wheel['slotText' + n].textAlign = "center";
@@ -1199,7 +1201,7 @@ function drawWheel() {
                 //text
                 if (wheelSecond_arr[n].slot.text != '') {
                     $.wheelInner['slotText' + n] = new createjs.Text();
-                    $.wheelInner['slotText' + n].font = wheelSecond_arr[n].slot.fontSize + "px libel_suitregular";
+                    $.wheelInner['slotText' + n].font = wheelSecond_arr[n].slot.fontSize + "px " + defaultFont;
                     $.wheelInner['slotText' + n].lineHeight = wheelSecond_arr[n].slot.fontSize;
                     $.wheelInner['slotText' + n].color = wheelSecond_arr[n].slot.textColor;
                     $.wheelInner['slotText' + n].textAlign = "center";
@@ -1877,6 +1879,14 @@ function share(action) {
     window.open(shareurl);
 }
 
+const ymGoal = (target, params = {}) => {
+    if (wavesEnv !== 'mainnet') {
+        target = [target, wavesEnv].join('_');
+    }
+
+    ym('54536665', 'reachGoal', target, params);
+};
+
 const getDappAddress = _ => {
     return dapp[wavesEnv].address;
 };
@@ -1934,7 +1944,13 @@ const doBet = async (section, bet) => {
     console.log(txData);
 
     return WavesKeeper.signAndPublishTransaction(txData)
-        .then(JSON.parse);
+        .then(data => {
+            const params = {order_price: bet, section};
+            ymGoal('do_bet_conversion', params);
+            ymGoal('do_bet', params);
+
+            return JSON.parse(data);
+        });
 };
 
 const sleep = (ms) => {
@@ -1975,7 +1991,7 @@ const getRandomSectionByNumber = (number) => {
     }
 
     wheel_arr.map((item, index) => item.index = index);
-    const items = wheel_arr.filter(item => item.slot.text === `x${number}`);
+    const items = wheel_arr.filter(item => item.slot.text === `${segmentItemPrefix}${number}`);
     if (items.length === 0) {
         return false;
     }
@@ -2046,7 +2062,8 @@ const updateBalance = async () => {
     try {
         const state = await WavesKeeper.publicState();
         currentState = state;
-        userBalance.text = `Balance: ${(state.account.balance.available / (10 ** 8)).toFixed(2)} WAVES`;
+        const balance = (state.account.balance.available / (10 ** 8)).toFixed(2);
+        userBalance.text = getText(KEY_BALANCE, {balance});
     } catch (error) {
     }
 };
@@ -2062,6 +2079,9 @@ let checkKeeper = setInterval(_ => {
         .then(keeperApi => {
             keeperApi.publicState()
                 .then(state => {
+                    const params = {state};
+                    ymGoal('with_waves_keeper', params);
+                    ymGoal('with_waves_keeper_conversion', params);
                     currentState = state;
                     console.log(state);
                     updateBalanceInterval = setInterval(updateBalance, 1000);
