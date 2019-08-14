@@ -1976,6 +1976,7 @@ const getCompleteBet = async (id) => {
                 break;
             }
         } catch (e) {
+            console.log(`Error: ${e.message}`);
         }
 
         await sleep(1000);
@@ -2015,7 +2016,7 @@ async function onBet(event) {
     }
 
     if (!isCorrectNetwork()) {
-        alert(`Choose correct network: ${wavesEnv}`);
+        alert(`Choose correct network inn Waves Keeper: ${wavesEnv}`);
 
         return;
     }
