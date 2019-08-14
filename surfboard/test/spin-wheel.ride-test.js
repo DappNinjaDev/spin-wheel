@@ -68,7 +68,7 @@ describe('Spin wheel test suite', async function () {
         const serverAddress = address(accounts.server);
         //const serverSeed = privateKey(accounts.server);
         const serverSeed = accounts.server;
-        daemonLib.init('http://localhost:6869/', 'R', dappAddress, serverAddress, serverSeed);
+        daemonLib.init('testnet', 'http://localhost:6869/', 'R', dappAddress, serverAddress, serverSeed);
         let counter = 0;
         daemonLib.setStoredGameId(0);
         while (true) {

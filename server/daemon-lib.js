@@ -4,25 +4,30 @@ let serverAccountSeed = null;
 let isInit = false;
 const {invokeScript, broadcast, nodeInteraction, waitForTx, libs} = require('@waves/waves-transactions');
 const wc = require('@waves/waves-crypto');
-const delay = require('delay');
+//const delay = require('delay');
 const fs = require('fs');
 const crypto = wc.crypto();
 let config = {
-    prod: {},
-    dev: {
+    mainnet: {
+        url: 'https://nodes.wavesplatform.com/',
+        chainId: 'W',
+    },
+    testnet: {
         url: 'https://testnodes.wavesnodes.com',
         chainId: 'T',
     }
 };
+let env = 'testnet';
 
-const init = (apiUrl, chainId, dappAddress1, serverAccountAddress1, serverAccountSeed1) => {
-    console.log('Init', apiUrl, chainId, dappAddress1, serverAccountAddress1, serverAccountSeed1);
+const init = (customEnv, apiUrl = null, chainId = null, dappAddress1 = null, serverAccountAddress1 = null, serverAccountSeed1 = null) => {
+    env = customEnv;
+    console.log('Init', customEnv, apiUrl, chainId, dappAddress1, serverAccountAddress1, serverAccountSeed1);
     if (apiUrl) {
-        config.dev.url = apiUrl;
+        config[customEnv].url = apiUrl;
     }
 
     if (chainId) {
-        config.dev.chainId = chainId;
+        config[customEnv].chainId = chainId;
     }
 
     if (dappAddress1 && serverAccountAddress1 && serverAccountSeed1) {
@@ -30,11 +35,10 @@ const init = (apiUrl, chainId, dappAddress1, serverAccountAddress1, serverAccoun
         serverAccountAddress = serverAccountAddress1;
         serverAccountSeed = serverAccountSeed1;
     } else {
-        //const {dappAddress, serverAccountAddress, serverAccountSeed} = require('./config.js');
         const config = require('./config.js');
-        dappAddress = config.dappAddress;
-        serverAccountAddress = config.serverAccountAddress;
-        serverAccountSeed = config.serverAccountSeed;
+        dappAddress = config[customEnv].dappAddress;
+        serverAccountAddress = config[customEnv].serverAccountAddress;
+        serverAccountSeed = config[customEnv].serverAccountSeed;
     }
 
     isInit = true;
@@ -43,7 +47,7 @@ const init = (apiUrl, chainId, dappAddress1, serverAccountAddress1, serverAccoun
 };
 
 const getConfig = (key) => {
-    return config['dev'][key];
+    return config[env][key];
 };
 
 const signGame = (gameId, seed) => {

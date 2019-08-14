@@ -1,5 +1,12 @@
 module.exports = {
-    dappAddress: '',
-    serverAccountAddress: '',
-    serverAccountSeed: ''
+    testnet: {
+        dappAddress: '',
+        serverAccountAddress: '',
+        serverAccountSeed: ''
+    },
+    mainnet: {
+        dappAddress: '',
+        serverAccountAddress: '',
+        serverAccountSeed: ''
+    },
 };
