@@ -81,12 +81,12 @@ const result = async (dappAddress, gameId, rsa, seed) => {
 };
 
 const setStoredGameId = (gameId) => {
-    const file = './last_game_id.txt';
+    const file = `./${env}.last_game_id.txt`;
     fs.writeFileSync(file, gameId);
 };
 
 const getStoredGameId = () => {
-    const file = './last_game_id.txt';
+    const file = `./${env}last_game_id.txt`;
     let gameId = 0;
     if (fs.existsSync(file)) {
         gameId = Number(fs.readFileSync(file, 'utf8'));
