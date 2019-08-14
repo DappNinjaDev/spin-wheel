@@ -1233,7 +1233,7 @@ function drawWheel() {
  * SPIN WHEEL - This is the function that runs to spin wheel
  *
  */
-function startSpinWheel(con, isForce = false, isEmulation = false) {
+function startSpinWheel(con, isForce = false, isEmulation = false, onSpinEnd = null) {
     if (!isForce) {
         if (gameData.spinning) {
             return;
@@ -1293,7 +1293,7 @@ function startSpinWheel(con, isForce = false, isEmulation = false) {
         if (gameData.physicsEngine) {
             startPhysicsSpin();
         } else {
-            startSpinWheelBig(isEmulation);
+            startSpinWheelBig(isEmulation, onSpinEnd);
         }
     }
 
@@ -1323,7 +1323,7 @@ function getAnglePosition(obj, x1, y1, radius, angle) {
  * START SPIN WHEEL INNER - This is the function that runs to spin inner wheel
  *
  */
-function startSpinWheelBig(isEmulation = false) {
+function startSpinWheelBig(isEmulation = false, onSpinEnd = null) {
     gameData.spindType = true;
     gameData.spinning = true;
     gameData.stopped = false;
@@ -1377,6 +1377,9 @@ function startSpinWheelBig(isEmulation = false) {
                     overwrite: true,
                     onComplete: function () {
                         checkWheelScore();
+                        if (onSpinEnd) {
+                            onSpinEnd();
+                        }
                     }
                 });
             }
@@ -2021,14 +2024,12 @@ async function onBet(event) {
         return;
     }
 
-    //console.log(betData.wavesSection, betData.wavesBet);
-
-    const run = (result, isForce = false, isEmulation = false) => {
+    buttonSpin.alpha = 0.5;
+    const run = (result, isForce = false, isEmulation = false, onSpinEnd = null) => {
         playerData.bet = 1;
         playerData.score = 100;
-        //toggleBetNumber('plus');
         getResult(result, -1);
-        startSpinWheel(true, isForce, isEmulation);
+        startSpinWheel(true, isForce, isEmulation, onSpinEnd);
     };
 
     try {
@@ -2048,10 +2049,12 @@ async function onBet(event) {
         }
 
         const section = getRandomSectionByNumber(completeBetInfo.resultSection);
-        //console.log(completeBetInfo, section);
-        run(section, true, false);
+        run(section, true, false, _ => {
+            buttonSpin.alpha = 1;
+        });
     } catch (e) {
         alert(e.message);
+        buttonSpin.alpha = 1;
     }
 }
 
