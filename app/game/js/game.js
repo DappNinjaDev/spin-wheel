@@ -721,6 +721,16 @@ function buildGameButton() {
         localStorage.setItem('is_sound_enabled', '0');
     });
 
+    buttonLangEn.cursor = "pointer";
+    buttonLangEn.addEventListener("click", function (evt) {
+        changeLang(LANG_EN)
+    });
+
+    buttonLangRu.cursor = "pointer";
+    buttonLangRu.addEventListener("click", function (evt) {
+        changeLang(LANG_RU)
+    });
+
     buttonFullscreen.cursor = "pointer";
     buttonFullscreen.addEventListener("click", function (evt) {
         toggleFullScreen();

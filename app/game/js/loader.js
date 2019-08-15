@@ -58,7 +58,10 @@ function initPreload() {
         {src: 'assets/button_google.png', id: 'buttonGoogle'},
         {src: 'assets/button_fullscreen.png', id: 'buttonFullscreen'},
         {src: 'assets/button_sound_on.png', id: 'buttonSoundOn'},
-        {src: 'assets/button_sound_off.png', id: 'buttonSoundOff'}];
+        {src: 'assets/button_sound_off.png', id: 'buttonSoundOff'},
+        {src: 'assets/flags/en_49.png', id: 'flagEn'},
+        {src: 'assets/flags/ru_49.png', id: 'flagRu'}
+    ];
 
     for (var n = 0; n < wheel_arr.length; n++) {
         if (wheel_arr[n].src != '') {

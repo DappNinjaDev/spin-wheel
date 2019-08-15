@@ -120,6 +120,15 @@ function buildGameCanvas() {
     buttonSpin.x = canvasW / 100 * 28;
     buttonSpin.y = canvasH / 100 * 73;
 
+    spinTxt = new createjs.Text();
+    spinTxt.font = "45px " + defaultFont;
+    spinTxt.color = "#5f2819";
+    spinTxt.textAlign = "center";
+    spinTxt.textBaseline = 'alphabetic';
+    spinTxt.text = getText(KEY_SPIN_BTN).toUpperCase();
+    spinTxt.x = canvasW / 100 * 28;
+    spinTxt.y = canvasH / 100 * 75;
+
     buttonPlus = new createjs.Bitmap(loader.getResult('buttonPlus'));
     centerReg(buttonPlus);
     buttonPlus.x = canvasW / 100 * 18;
@@ -302,6 +311,11 @@ function buildGameCanvas() {
     centerReg(buttonSoundOff);
     buttonSoundOn.visible = false;
 
+    buttonLangEn = new createjs.Bitmap(loader.getResult('flagEn'));
+    centerReg(buttonLangEn);
+    buttonLangRu = new createjs.Bitmap(loader.getResult('flagRu'));
+    centerReg(buttonLangRu);
+
     if (guide) {
         guideline = new createjs.Shape();
         guideline.graphics.setStrokeStyle(2).beginStroke('red').drawRect((stageW - contentW) / 2, (stageH - contentH) / 2, contentW, contentH);
@@ -312,7 +326,7 @@ function buildGameCanvas() {
         lightsContainer, itemArrow, wheelPinContainer);
 
     gameContainer.addChild(itemPin, itemLightAnimate, itemTicket, itemSide, itemGame1, itemGame2, itemTicketMask,
-        ticketContainer, creditTxt, chanceTxt, betTxt, buttonMinus, buttonPlus, buttonSpin, itemStatusBg, statusTxt,
+        ticketContainer, creditTxt, chanceTxt, betTxt, buttonMinus, buttonPlus, buttonSpin, spinTxt, itemStatusBg, statusTxt,
         instructionTxt, userBalance,
         bet1, bet2, bet4, bet8, bet14,
         section2, section5, section6, section10, section20
@@ -323,7 +337,7 @@ function buildGameCanvas() {
         resultContainer.addChild(resultShareTxt, buttonFacebook, buttonTwitter, buttonGoogle);
     }
 
-    canvasContainer.addChild(/*bg,*/ wheelContainer, mainContainer, gameContainer, resultContainer, /*buttonFullscreen,*/ buttonSoundOn, buttonSoundOff, guideline);
+    canvasContainer.addChild(/*bg,*/ wheelContainer, mainContainer, gameContainer, resultContainer, /*buttonFullscreen,*/ buttonSoundOn, buttonSoundOff, buttonLangEn, buttonLangRu, guideline);
     stage.addChild(canvasContainer);
 
     resizeCanvas();
@@ -337,10 +351,12 @@ function buildGameCanvas() {
  */
 function resizeCanvas() {
     if (canvasContainer != undefined) {
-        buttonSoundOn.x = buttonSoundOff.x = canvasW - offset.x;
-        buttonSoundOn.y = buttonSoundOff.y = offset.y;
-        buttonSoundOn.x = buttonSoundOff.x -= 40;
-        buttonSoundOn.y = buttonSoundOff.y += 30;
+        buttonSoundOn.x = buttonSoundOff.x = buttonLangEn.x = buttonLangRu.x = canvasW - offset.x;
+        buttonSoundOn.y = buttonSoundOff.y = buttonLangEn.y = buttonLangRu.y = offset.y;
+        buttonSoundOn.x = buttonSoundOff.x = buttonLangEn.x = buttonLangRu.x -= 40;
+        buttonSoundOn.y = buttonSoundOff.y = buttonLangEn.y = buttonLangRu.y += 30;
+        buttonLangEn.x -= 150;
+        buttonLangRu.x -= 80;
 
         buttonFullscreen.x = buttonSoundOn.x - 63;
         buttonFullscreen.y = buttonSoundOn.y;
