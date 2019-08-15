@@ -163,7 +163,7 @@ function buildGameCanvas() {
     itemStatusBg = new createjs.Shape();
     itemStatusBg.graphics.beginFill("red");
     gameData.shape = itemStatusBg.graphics.beginFill("red").command;
-    itemStatusBg.graphics.drawRoundRectComplex(canvasW / 100 * 13.9, canvasH / 100 * 22.3, 360, 63, 5, 5, 5, 5);
+    itemStatusBg.graphics.drawRoundRectComplex(canvasW / 100 * 12, canvasH / 100 * 22.3, 410, 63, 5, 5, 5, 5);
 
     statusTxt = new createjs.Text();
     statusTxt.font = "45px " + defaultFont;
