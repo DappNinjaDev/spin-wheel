@@ -13,7 +13,7 @@ const textValues = {
     [LANG_EN]: {
         [KEY_SPIN_YOUR_FORTUNE]: 'Spin your fortune',
         [KEY_INSTRUCTION_BET_AND_SPIN]: 'Place your bet, spin the wheel.',
-        [KEY_BALANCE]: 'Balance: {balance} WAVES',
+        [KEY_BALANCE]: 'Balance: {balance}',
         [KEY_SPINNING]: 'Spinning...',
         [KEY_WIN_WAVES]: 'Win {count} WAVES',
         [KEY_FAIL]: 'Luck next time',

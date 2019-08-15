@@ -712,17 +712,20 @@ function buildGameButton() {
     buttonSoundOff.cursor = "pointer";
     buttonSoundOff.addEventListener("click", function (evt) {
         toggleGameMute(true);
+        localStorage.setItem('is_sound_enabled', '1');
     });
 
     buttonSoundOn.cursor = "pointer";
     buttonSoundOn.addEventListener("click", function (evt) {
         toggleGameMute(false);
+        localStorage.setItem('is_sound_enabled', '0');
     });
 
     buttonFullscreen.cursor = "pointer";
     buttonFullscreen.addEventListener("click", function (evt) {
         toggleFullScreen();
     });
+    toggleGameMute(localStorage.getItem('is_sound_enabled') === '1');
 }
 
 function toggleWheelActive(con) {
@@ -2073,7 +2076,7 @@ const updateBalance = async () => {
         const state = await WavesKeeper.publicState();
         currentState = state;
         const balance = (state.account.balance.available / (10 ** 8)).toFixed(2);
-        userBalance.text = getText(KEY_BALANCE, {balance});
+        userBalance.text = getText(KEY_BALANCE, {balance: `${balance} WAVES`});
     } catch (error) {
     }
 };

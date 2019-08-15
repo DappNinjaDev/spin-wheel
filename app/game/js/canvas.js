@@ -180,7 +180,7 @@ function buildGameCanvas() {
     userBalance.color = "#fff";
     userBalance.textAlign = "left";
     userBalance.textBaseline = 'alphabetic';
-    userBalance.text = 'Balance: ...';
+    userBalance.text = getText(KEY_BALANCE, {balance: '...'});
     userBalance.lineHeight = 32;
     userBalance.x = canvasW / 100 * 9;
     userBalance.y = canvasH / 100 * 16;
