@@ -1939,7 +1939,6 @@ const doBet = async (section, bet) => {
         type: 16,
         data: {
             fee: {
-                // todo research fee theme. server send 0.01 fee, but tx possible send with 0.005 fee
                 tokens: commission,
                 assetId: "WAVES"
             },
@@ -1979,11 +1978,12 @@ const sleep = (ms) => {
 
 const getCompleteBet = async (id) => {
     let info = null;
+    const accountDataByKey = WavesTransactions.nodeInteraction.accountDataByKey;
     for (let i = 0; i < 100; i++) {
         try {
-            info = await WavesTransactions.nodeInteraction.accountDataByKey(`${id}_STATUS`, getDappAddress(), getUrl());
+            info = await accountDataByKey(`${id}_STATUS`, getDappAddress(), getUrl());
             if (info && info.value !== "NEW") {
-                let sectionInfo = await WavesTransactions.nodeInteraction.accountDataByKey(`${id}_RESULT`, getDappAddress(), getUrl());
+                let sectionInfo = await accountDataByKey(`${id}_RESULT`, getDappAddress(), getUrl());
                 info = {
                     status: info.value,
                     resultSection: sectionInfo.value
@@ -2024,15 +2024,27 @@ async function onBet(event) {
     if (gameData.spinning) {
         console.log('Already spinning');
         return;
+    } else {
+        if (!updateBalanceInterval) {
+            const keeperApi = await WavesKeeper.initialPromise;
+            const state = await keeperApi.publicState();
+            const params = {state};
+            ymGoal('with_waves_keeper', params);
+            ymGoal('with_waves_keeper_conversion', params);
+            currentState = state;
+            console.log(state);
+            updateBalanceInterval = setInterval(updateBalance, 1000);
+        }
     }
 
     if (!isWavesExists()) {
         $('#installKeeperModal').modal('show');
+
         return;
     }
 
     if (!isCorrectNetwork()) {
-        alert(`Choose correct network inn Waves Keeper: ${wavesEnv}`);
+        alert(`Choose correct network in Waves Keeper: ${wavesEnv}`);
 
         return;
     }
@@ -2054,10 +2066,8 @@ async function onBet(event) {
         const completeBetInfo = await getCompleteBet(betInfo.id);
         console.log(completeBetInfo);
         if (completeBetInfo.status === "WIN") {
-            // win
             ymGoal('bet_win', completeBetInfo);
         } else {
-            // loose
             ymGoal('bet_fail', completeBetInfo);
         }
 
@@ -2076,7 +2086,13 @@ const isWavesExists = _ => {
 };
 
 const isCorrectNetwork = _ => {
-    return currentState.account.balance.network === wavesEnv;
+    let network = null;
+    try {
+        network = currentState.account.balance.network;
+    } catch (e) {
+    }
+
+    return network ? network === wavesEnv : false;
 };
 
 let updateBalanceInterval = null;
@@ -2098,16 +2114,5 @@ let checkKeeper = setInterval(_ => {
     }
 
     clearInterval(checkKeeper);
-    WavesKeeper.initialPromise
-        .then(keeperApi => {
-            keeperApi.publicState()
-                .then(state => {
-                    const params = {state};
-                    ymGoal('with_waves_keeper', params);
-                    ymGoal('with_waves_keeper_conversion', params);
-                    currentState = state;
-                    console.log(state);
-                    updateBalanceInterval = setInterval(updateBalance, 1000);
-                });
-        });
+
 }, 300);
