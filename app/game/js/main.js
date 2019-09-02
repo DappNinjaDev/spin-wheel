@@ -3,8 +3,8 @@
 ////////////////////////////////////////////////////////////
 var stageW = 1280;
 var stageH = 768;
-var contentW = 1024;
-var contentH = 576;
+var contentW = 1280;
+var contentH = 768;
 
 /*!
  *
@@ -53,7 +53,6 @@ function resizeGameFunc() {
         }
 
         scalePercent = scalePercent > 1 ? 1 : scalePercent;
-
         if (windowW > stageW && windowH > stageH) {
             if (windowW > stageW) {
                 scalePercent = windowW / stageW;
