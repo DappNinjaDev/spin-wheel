@@ -1976,6 +1976,27 @@ const sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 };
 
+const getLastGames = async (count = 10) => {
+    const accountDataByKey = WavesTransactions.nodeInteraction.accountDataByKey;
+    const lastGameId = (await accountDataByKey(`APP_GAME_ID`, getDappAddress(), getUrl())).value;
+    console.log(lastGameId);
+    let result = [];
+    for (let i = 0; i < count; i++) {
+        const id = lastGameId - i;
+        const txId = (await accountDataByKey(`USER_GAME_ID_${id}`, getDappAddress(), getUrl())).value;
+        const status = (await accountDataByKey(`${txId}_STATUS`, getDappAddress(), getUrl())).value;
+        console.log(txId, status);
+        result.push({
+            gameId: id,
+            txId,
+            status: status
+        });
+    }
+
+    console.log(result);
+    return result;
+};
+
 const getCompleteBet = async (id) => {
     let info = null;
     const accountDataByKey = WavesTransactions.nodeInteraction.accountDataByKey;

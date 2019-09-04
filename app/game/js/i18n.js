@@ -5,6 +5,7 @@ const KEY_SPINNING = 'spinning';
 const KEY_WIN_WAVES = 'win_waves';
 const KEY_FAIL = 'fail';
 const KEY_SPIN_BTN = 'spin_btn';
+const KEY_ALL_GAMES_BTN = 'all_games_btn';
 
 const LANG_EN = 'en';
 const LANG_RU = 'ru';
@@ -67,6 +68,7 @@ const textValues = {
         [KEY_WIN_WAVES]: 'Win {count} WAVES',
         [KEY_FAIL]: 'Luck next time',
         [KEY_SPIN_BTN]: 'Spin',
+        [KEY_ALL_GAMES_BTN]: 'Last games',
     },
     [LANG_RU]: {
         [KEY_SPIN_YOUR_FORTUNE]: 'Сделайте ставку',
@@ -76,6 +78,7 @@ const textValues = {
         [KEY_WIN_WAVES]: 'Выиграно {count} WAVES',
         [KEY_FAIL]: 'Попробуйте еще',
         [KEY_SPIN_BTN]: 'Вращать',
+        [KEY_ALL_GAMES_BTN]: 'Предыдущие игры',
     },
 };
 

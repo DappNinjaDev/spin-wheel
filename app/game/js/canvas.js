@@ -182,7 +182,7 @@ function buildGameCanvas() {
     instructionTxt.text = '';
     instructionTxt.lineHeight = 32;
     instructionTxt.x = canvasW / 100 * 28;
-    instructionTxt.y = canvasH / 100 * 88;
+    instructionTxt.y = canvasH / 100 * 94;
 
     userBalance = new createjs.Text();
     userBalance.font = "30px " + defaultFont;
@@ -311,6 +311,45 @@ function buildGameCanvas() {
     centerReg(buttonSoundOff);
     buttonSoundOn.visible = false;
 
+    allGamesBtn = new createjs.Text();
+    allGamesBtn.font = "30px " + defaultFont;
+    allGamesBtn.color = "#fff";
+    //allGamesBtn.textAlign = "center";
+    allGamesBtn.textBaseline = 'top';
+    allGamesBtn.text = getText(KEY_ALL_GAMES_BTN);
+    allGamesBtn.lineHeight = 32;
+    allGamesBtn.cursor = "pointer";
+    allGamesBtn.x = canvasW / 100 * 23;
+    allGamesBtn.y = canvasH / 100 * 84;
+    allGamesBtn.cursor = "pointer";
+    allGamesBtn.addEventListener("click", async _ => {
+        $('#lastBetsModal .modal-body').html('Loading...');
+        $('#lastBetsModal').modal('show');
+        const data = await getLastGames();
+        let dataTable = '<table class="table table-striped">\n' +
+            '  <thead>\n' +
+            '    <tr>\n' +
+            '      <th scope="col">TX</th>\n' +
+            '      <th scope="col">Win?</th>\n' +
+            '    </tr>\n' +
+            '  </thead>\n' +
+            '  <tbody>';
+        data.forEach(item => {
+            dataTable += '<tr>\n' +
+                '      <td><a href="https://wavesexplorer.com/tx/' + item.txId + '" target="_blank">' + item.txId.substring(0, 10) + '...</a></td>\n' +
+                '      <td>' + item.status + '</td>\n' +
+                '    </tr>';
+        });
+
+        dataTable += '</tbody>\n' +
+            '</table>';
+        $('#lastBetsModal .modal-body').html(dataTable);
+
+    });
+    allGamesBtn.hitArea = new createjs.Shape();
+    allGamesBtn.hitArea.graphics.clear().beginFill("#FFF").drawRect(0, 0, allGamesBtn.getMeasuredWidth(), allGamesBtn.getMeasuredHeight());
+
+
     buttonLangEn = new createjs.Bitmap(loader.getResult('flagEn'));
     centerReg(buttonLangEn);
     buttonLangRu = new createjs.Bitmap(loader.getResult('flagRu'));
@@ -329,7 +368,8 @@ function buildGameCanvas() {
         ticketContainer, creditTxt, chanceTxt, betTxt, buttonMinus, buttonPlus, buttonSpin, spinTxt, itemStatusBg, statusTxt,
         instructionTxt, userBalance,
         bet1, bet2, bet4, bet8, bet14,
-        section2, section5, section6, section10, section20
+        section2, section5, section6, section10, section20,
+        allGamesBtn
     );
     resultContainer.addChild(itemResultSide, resultTitleTxt, resultScoreTxt, buttonReplay);
 
