@@ -2002,7 +2002,7 @@ const getLastGames = async (count = 10) => {
 const getCompleteBet = async (id) => {
     let info = null;
     const accountDataByKey = WavesTransactions.nodeInteraction.accountDataByKey;
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 300; i++) {
         try {
             info = await accountDataByKey(`${id}_STATUS`, getDappAddress(), getUrl());
             if (info && info.value !== "NEW") {
