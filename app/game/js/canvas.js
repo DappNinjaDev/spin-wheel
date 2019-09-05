@@ -177,12 +177,12 @@ function buildGameCanvas() {
     instructionTxt = new createjs.Text();
     instructionTxt.font = "30px " + defaultFont;
     instructionTxt.color = "#fff";
-    instructionTxt.textAlign = "center";
-    instructionTxt.textBaseline = 'alphabetic';
+    //instructionTxt.textAlign = "center";
+    //instructionTxt.textBaseline = 'alphabetic';
     instructionTxt.text = '';
     instructionTxt.lineHeight = 32;
-    instructionTxt.x = canvasW / 100 * 28;
-    instructionTxt.y = canvasH / 100 * 94;
+    instructionTxt.x = canvasW / 100 * 9;
+    instructionTxt.y = canvasH / 100 * 90;
 
     userBalance = new createjs.Text();
     userBalance.font = "30px " + defaultFont;
@@ -315,11 +315,11 @@ function buildGameCanvas() {
     allGamesBtn.font = "30px " + defaultFont;
     allGamesBtn.color = "#fff";
     //allGamesBtn.textAlign = "center";
-    allGamesBtn.textBaseline = 'top';
+    //allGamesBtn.textBaseline = 'top';
     allGamesBtn.text = getText(KEY_ALL_GAMES_BTN);
     allGamesBtn.lineHeight = 32;
     allGamesBtn.cursor = "pointer";
-    allGamesBtn.x = canvasW / 100 * 23;
+    allGamesBtn.x = canvasW / 100 * 9;
     allGamesBtn.y = canvasH / 100 * 84;
     allGamesBtn.cursor = "pointer";
     allGamesBtn.addEventListener("click", async _ => {
@@ -330,6 +330,7 @@ function buildGameCanvas() {
             '  <thead>\n' +
             '    <tr>\n' +
             '      <th scope="col">TX</th>\n' +
+            '      <th scope="col">Address</th>\n' +
             '      <th scope="col">Win?</th>\n' +
             '    </tr>\n' +
             '  </thead>\n' +
@@ -337,6 +338,7 @@ function buildGameCanvas() {
         data.forEach(item => {
             dataTable += '<tr>\n' +
                 '      <td><a href="https://wavesexplorer.com/tx/' + item.txId + '" target="_blank">' + item.txId.substring(0, 10) + '...</a></td>\n' +
+                '      <td><a href="https://wavesexplorer.com/address/' + item.wallet + '" target="_blank">' + item.txId.substring(0, 10) + '...</a></td>\n' +
                 '      <td>' + item.status + '</td>\n' +
                 '    </tr>';
         });

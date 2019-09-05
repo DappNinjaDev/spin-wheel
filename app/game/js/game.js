@@ -1979,17 +1979,19 @@ const sleep = (ms) => {
 const getLastGames = async (count = 10) => {
     const accountDataByKey = WavesTransactions.nodeInteraction.accountDataByKey;
     const lastGameId = (await accountDataByKey(`APP_GAME_ID`, getDappAddress(), getUrl())).value;
-    console.log(lastGameId);
+    //console.log(lastGameId);
     let result = [];
     for (let i = 0; i < count; i++) {
-        const id = lastGameId - i;
-        const txId = (await accountDataByKey(`USER_GAME_ID_${id}`, getDappAddress(), getUrl())).value;
+        const gameId = lastGameId - i;
+        const txId = (await accountDataByKey(`USER_GAME_ID_${gameId}`, getDappAddress(), getUrl())).value;
+        const wallet = (await accountDataByKey(`${txId}`, getDappAddress(), getUrl())).value;
         const status = (await accountDataByKey(`${txId}_STATUS`, getDappAddress(), getUrl())).value;
         console.log(txId, status);
         result.push({
-            gameId: id,
+            gameId,
             txId,
-            status: status
+            status,
+            wallet
         });
     }
 
