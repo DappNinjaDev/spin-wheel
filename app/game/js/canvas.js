@@ -338,7 +338,7 @@ function buildGameCanvas() {
         data.forEach(item => {
             dataTable += '<tr>\n' +
                 '      <td><a href="https://wavesexplorer.com/tx/' + item.txId + '" target="_blank">' + item.txId.substring(0, 10) + '...</a></td>\n' +
-                '      <td><a href="https://wavesexplorer.com/address/' + item.wallet + '" target="_blank">' + item.txId.substring(0, 10) + '...</a></td>\n' +
+                '      <td><a href="https://wavesexplorer.com/address/' + item.wallet + '" target="_blank">' + item.wallet.substring(0, 10) + '...</a></td>\n' +
                 '      <td>' + item.status + '</td>\n' +
                 '    </tr>';
         });
