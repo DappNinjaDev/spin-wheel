@@ -1,12 +1,15 @@
 let dappAddress = null;
 let serverAccountAddress = null;
 let serverAccountSeed = null;
+let rsaPrivateKey = null;
 let isInit = false;
 const {invokeScript, broadcast, nodeInteraction, waitForTx, libs} = require('@waves/waves-transactions');
 const wc = require('@waves/waves-crypto');
 //const delay = require('delay');
 const fs = require('fs');
 const crypto = wc.crypto();
+const {sign} = require('crypto');
+
 let config = {
     mainnet: {
         url: 'https://nodes.wavesplatform.com/',
@@ -19,7 +22,7 @@ let config = {
 };
 let env = 'testnet';
 
-const init = (customEnv, apiUrl = null, chainId = null, dappAddress1 = null, serverAccountAddress1 = null, serverAccountSeed1 = null) => {
+const init = (customEnv, apiUrl = null, chainId = null, dappAddress1 = null, serverAccountAddress1 = null, serverAccountSeed1 = null, rsaPrivateKey1 = null) => {
     env = customEnv;
     console.log('Init', customEnv, apiUrl, chainId, dappAddress1, serverAccountAddress1, serverAccountSeed1);
     if (apiUrl) {
@@ -30,15 +33,17 @@ const init = (customEnv, apiUrl = null, chainId = null, dappAddress1 = null, ser
         config[customEnv].chainId = chainId;
     }
 
-    if (dappAddress1 && serverAccountAddress1 && serverAccountSeed1) {
+    if (dappAddress1 && serverAccountAddress1 && serverAccountSeed1 && rsaPrivateKey1) {
         dappAddress = dappAddress1;
         serverAccountAddress = serverAccountAddress1;
         serverAccountSeed = serverAccountSeed1;
+        rsaPrivateKey = rsaPrivateKey1;
     } else {
         const config = require('./config.js');
         dappAddress = config[customEnv].dappAddress;
         serverAccountAddress = config[customEnv].serverAccountAddress;
         serverAccountSeed = config[customEnv].serverAccountSeed;
+        rsaPrivateKey = config[customEnv].rsaPrivateKey;
     }
 
     isInit = true;
@@ -50,9 +55,9 @@ const getConfig = (key) => {
     return config[env][key];
 };
 
-const signGame = (gameId, seed) => {
-    const bytes = wc.base58Decode(gameId);
-    return crypto.signBytes(seed, bytes);
+const signGame = (gameId, rsaPrivateKey) => {
+    const bytes = Buffer.from(wc.base58Decode(gameId));
+    return sign('sha256', bytes, rsaPrivateKey).toString('base64');
 };
 
 const result = async (dappAddress, gameId, rsa, seed) => {
@@ -125,7 +130,7 @@ const doJob = async () => {
     }
 
     console.log('Game data', gameData.value);
-    const sign = signGame(gameData.value, serverAccountSeed);
+    const sign = signGame(gameData.value, rsaPrivateKey);
     console.log('Sign is', sign);
     const resultTx = await result(dappAddress, gameData.value, sign, serverAccountSeed);
     console.log('Result tx', resultTx.id, 'wait..');
@@ -135,4 +140,4 @@ const doJob = async () => {
     return resultTx;
 };
 
-module.exports = {init, doJob, setStoredGameId};
+module.exports = {init, doJob, setStoredGameId, signGame};

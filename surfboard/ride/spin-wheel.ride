@@ -2,7 +2,8 @@
 {-# CONTENT_TYPE DAPP #-}
 {-# SCRIPT_TYPE ACCOUNT #-}
 
-let ServerPublicKey = base58'{{server_public_key}}'
+let RSAPUBLIC = fromBase64String("base64:MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA5+4469eSQOx3lhnCaVYqN5MbrGtLVwTDKxvJIBLvERq/sCti35ow+lYhOxBut2VaDIfFfUSwJdxs2CGWaG8mlYle3RD126VpsdSUUkVR5c8fZdoWOohKo1A5nbZTXi4RhUmpQvUM30avjJ1vOD8l07XMSQ+99WlAUEVXdm0oQeKHz0xjL5TCtV+6HxGfSX6IfXnhDMs0EaSm+lyg76Hs7sC2/jXLhnyyWuW9IEphgRwgZI0+7qSu5l5evLQhzsAH4RbIXJkWZ+JWczie5HBX1wrsMCgz52cAtBhaaB4dVDKqnhvGZlD5cRNmxD15qZeyT5NGScA22qsf10nTRRV+H6TjT5zZXoyI8cWsg5EtnO4Wau8QsxckpVNgL+Dzxwm1/FiNp5Bt4LD/yBW2Yb98FB6Vf95yCy+49fPILG9xA5iMONXZRpIq5xw48fjth8TLvLXRUE9uk+wToQT/tf8ip/eJ5Ow4M5YSO0CZ1EDk86dD9W4oto4b6bHa2EZ91wRXZH7J8zCAo9yUVAJcfCdeEE7SQrjYiD/F9rFOFCvE1LZRSLLEnbvrdWDjPRYxml8YUNtEQs/C+8SJJkamzoRcVE84cxwvrAFhrSf4xXCk+LwYYFz1UguUC6x1979jxIR3J+HWhwTXwfDoDXEMrWAj0veorTYeYB1BMAWu9vRsDNMCAwEAAQ==")
+#let ServerPublicKey = base58'{{server_public_key}}'
 let ServerAddress = addressFromStringValue("{{server_address}}")
 let RouletteSections = 21
 
@@ -78,7 +79,8 @@ func NewGameId () = {
 }
 
 func GenerateRandInt (gameId: String, rsaSign: String) = {
-    let rsaSigValid = sigVerify(fromBase58String(gameId), fromBase58String(rsaSign), ServerPublicKey);
+    #let rsaSigValid = sigVerify(fromBase58String(gameId), fromBase58String(rsaSign), ServerPublicKey);
+    let rsaSigValid = rsaVerify(SHA256, fromBase58String(gameId), fromBase64String(rsaSign), RSAPUBLIC)
     if (rsaSigValid) then
     {
         let rand = (toInt(sha256(toBytes(rsaSign))) % RouletteSections)

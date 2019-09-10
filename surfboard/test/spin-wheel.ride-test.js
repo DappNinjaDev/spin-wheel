@@ -1,5 +1,5 @@
 const wvs = 10 ** 8;
-const maxBets = 100;
+const maxBets = 10;
 const bet = 100000000;
 
 describe('Spin wheel test suite', async function () {
@@ -22,7 +22,7 @@ describe('Spin wheel test suite', async function () {
         const serverPublicKey = publicKey(accounts.server);
         const serverAddress = address(accounts.server);
         console.log('Public key', serverPublicKey, 'serverAddress', serverAddress);
-        let contract = file('spin-wheel.ride').replace('{{server_address}}', serverAddress).replace('{{server_public_key}}', serverPublicKey);
+        let contract = file('spin-wheel.ride').replace('{{server_address}}', serverAddress)/*.replace('{{server_public_key}}', serverPublicKey)*/;
         const script = compile(contract);
         const ssTx = setScript({script}, accounts.dapp);
         await broadcast(ssTx);
@@ -63,12 +63,12 @@ describe('Spin wheel test suite', async function () {
 
     it('Sign txs for random', async function () {
         const daemonLib = require('../../server/daemon-lib');
+        const config = require('../../server/config.js');
         const promises = [];
         const dappAddress = address(accounts.dapp);
         const serverAddress = address(accounts.server);
-        //const serverSeed = privateKey(accounts.server);
         const serverSeed = accounts.server;
-        daemonLib.init('testnet', 'http://localhost:6869/', 'R', dappAddress, serverAddress, serverSeed);
+        daemonLib.init('testnet', 'http://localhost:6869/', 'R', dappAddress, serverAddress, serverSeed, config.testnet.rsaPrivateKey);
         let counter = 0;
         daemonLib.setStoredGameId(0);
         while (true) {
