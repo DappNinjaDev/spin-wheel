@@ -731,6 +731,11 @@ function buildGameButton() {
         changeLang(LANG_RU)
     });
 
+    wavesGranted.cursor = "pointer";
+    wavesGranted.addEventListener("click", function (evt) {
+        window.open('https://waveslabs.com/', '_blank');
+    });
+
     buttonFullscreen.cursor = "pointer";
     buttonFullscreen.addEventListener("click", function (evt) {
         toggleFullScreen();

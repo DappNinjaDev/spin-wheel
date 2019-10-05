@@ -356,6 +356,8 @@ function buildGameCanvas() {
     centerReg(buttonLangEn);
     buttonLangRu = new createjs.Bitmap(loader.getResult('flagRu'));
     centerReg(buttonLangRu);
+    wavesGranted = new createjs.Bitmap(loader.getResult('wavesGranted'));
+    centerReg(wavesGranted);
 
     if (guide) {
         guideline = new createjs.Shape();
@@ -379,7 +381,7 @@ function buildGameCanvas() {
         resultContainer.addChild(resultShareTxt, buttonFacebook, buttonTwitter, buttonGoogle);
     }
 
-    canvasContainer.addChild(/*bg,*/ wheelContainer, mainContainer, gameContainer, resultContainer, /*buttonFullscreen,*/ buttonSoundOn, buttonSoundOff, buttonLangEn, buttonLangRu, guideline);
+    canvasContainer.addChild(/*bg,*/ wheelContainer, mainContainer, gameContainer, resultContainer, /*buttonFullscreen,*/ buttonSoundOn, buttonSoundOff, buttonLangEn, buttonLangRu, wavesGranted, guideline);
     stage.addChild(canvasContainer);
 
     resizeCanvas();
@@ -393,12 +395,15 @@ function buildGameCanvas() {
  */
 function resizeCanvas() {
     if (canvasContainer != undefined) {
-        buttonSoundOn.x = buttonSoundOff.x = buttonLangEn.x = buttonLangRu.x = canvasW - offset.x;
-        buttonSoundOn.y = buttonSoundOff.y = buttonLangEn.y = buttonLangRu.y = offset.y;
-        buttonSoundOn.x = buttonSoundOff.x = buttonLangEn.x = buttonLangRu.x -= 40;
-        buttonSoundOn.y = buttonSoundOff.y = buttonLangEn.y = buttonLangRu.y += 30;
+        buttonSoundOn.x = buttonSoundOff.x = buttonLangEn.x = buttonLangRu.x = wavesGranted.x = canvasW - offset.x;
+        buttonSoundOn.y = buttonSoundOff.y = buttonLangEn.y = buttonLangRu.y = wavesGranted.y = offset.y;
+        buttonSoundOn.x = buttonSoundOff.x = buttonLangEn.x = buttonLangRu.x = wavesGranted.x -= 40;
+        buttonSoundOn.y = buttonSoundOff.y = buttonLangEn.y = buttonLangRu.y = wavesGranted.y += 30;
         buttonLangEn.x -= 150;
         buttonLangRu.x -= 80;
+
+        wavesGranted.x -= 370;
+        wavesGranted.y += 680;
 
         buttonFullscreen.x = buttonSoundOn.x - 63;
         buttonFullscreen.y = buttonSoundOn.y;
