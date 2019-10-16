@@ -140,4 +140,37 @@ const doJob = async () => {
     return resultTx;
 };
 
-module.exports = {init, doJob, setStoredGameId, signGame};
+const getGameTxById = async (gameId) => {
+    return await nodeInteraction.accountDataByKey(`USER_GAME_ID_${gameId}`, dappAddress, getConfig('url'));
+};
+
+const gameInfo = async (gameId) => {
+    const gameData = await getGameTxById(gameId);
+    const gameTx = gameData.value;
+    const amountData = await nodeInteraction.accountDataByKey(`${gameTx}_AMOUNT`, dappAddress, getConfig('url'));
+    const winAmountData = await nodeInteraction.accountDataByKey(`${gameTx}_WIN_AMOUNT`, dappAddress, getConfig('url'));
+    return {
+        tx: gameTx,
+        amount: amountData.value,
+        winAmount: winAmountData.value,
+    };
+
+};
+
+const getGameResult = async (gameId) => {
+    //console.log(dappAddress, getConfig('url'));
+    //const gameData = await nodeInteraction.accountDataByKey(`USER_GAME_ID_${gameId}`, dappAddress, getConfig('url'));
+    const gameData = await getGameTxById(gameId);
+    if (!gameData) {
+        return false;
+    }
+
+    const gameStatus = await nodeInteraction.accountDataByKey(`${gameData.value}_STATUS`, dappAddress, getConfig('url'));
+    if (!gameStatus) {
+        return false;
+    }
+
+    return gameStatus.value;
+};
+
+module.exports = {init, doJob, setStoredGameId, signGame, result, getGameResult, getGameTxById, gameInfo};

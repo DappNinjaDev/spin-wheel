@@ -135,8 +135,10 @@ func bet(expectedResult: Int) = {
     let feeNotInWaves = isDefined(pmt.assetId)
     let amount = pmt.amount;
     let winAmt = GetWinAmount(pmt.amount, expectedResult)
-
-    if (betNotInWaves) then throw(ErrorBetMustBeInWaves)
+    let balance = wavesBalance(this)
+    let newAmount = balance - winAmt
+    if (newAmount < 0) then throw("Not enough balance for this bet")
+    else if (betNotInWaves) then throw(ErrorBetMustBeInWaves)
     else if (feeNotInWaves) then throw(ErrorTransactionMustBeInWaves)
         else if (txIdUsed) then throw(ErrorTransactionUsed)
             else {
